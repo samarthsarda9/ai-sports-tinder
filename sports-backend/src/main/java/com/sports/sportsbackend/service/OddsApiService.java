@@ -1,0 +1,35 @@
+package com.sports.sportsbackend.service;
+
+import com.sports.sportsbackend.dto.OddsApiDto;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+@Service
+public class OddsApiService {
+
+    @Value("${ODDS_API_KEY}")
+    private String oddsApiKey;
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    public OddsApiDto[] getOdds(String sport, String region, String market) {
+        if (oddsApiKey == null || oddsApiKey.isEmpty()) {
+            throw new RuntimeException("Odds API key not set");
+        }
+        String url = String.format(
+                "https://api.the-odds-api.com/v4/sports/%s/odds/?apiKey=%s&regions=%s&markets=%s",
+                sport, oddsApiKey, region, market);
+        try {
+            ResponseEntity<OddsApiDto[]> response = restTemplate.getForEntity(url, OddsApiDto[].class);
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                return response.getBody();
+            } else {
+                return new OddsApiDto[0];
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch odds data: " + e.getMessage());
+        }
+    }
+}
