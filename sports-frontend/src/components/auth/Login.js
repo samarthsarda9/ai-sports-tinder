@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import {
-    Container, 
+    Container,
     Paper,
     TextField,
     Button,
@@ -11,7 +11,7 @@ import {
 } from '@mui/materials'
 import { useAuth } from '../../contexts/AuthContext'
 
-const login = () => {
+const Login = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -45,24 +45,25 @@ const login = () => {
 
     return (
         <Container maxWidth="sm">
-            <Box sx={{
-                marginTop: 8,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-            }}
+            <Box
+                sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
             >
-                <Paper 
+                <Paper
                     elevation={3}
                     sx={{
                         padding: 4,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        width: '100%'
+                        width: '100%',
                     }}
                 >
-                    <Typography component="h1" varient="h4" gutterBottom>
+                    <Typography component="h1" variant="h4" gutterBottom>
                         Login
                     </Typography>
 
@@ -72,7 +73,7 @@ const login = () => {
                         </Alert>
                     )}
 
-                    <Box component="form" onSubmit={handleSubmit} sx={{ width: '100% '}}>
+                    <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
                         <TextField
                             margin="normal"
                             required
@@ -108,9 +109,9 @@ const login = () => {
                             {loading ? <CircularProgress size={24} /> : 'Sign In'}
                         </Button>
 
-                        <Box sx={{ textAlign: 'center '}}>
-                            <Link to="/register" style={{ textDecoration: 'none '}}>
-                                <Typography varient="body2" color="primary">
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Link to="/register" style={{ textDecoration: 'none' }}>
+                                <Typography variant="body2" color="primary">
                                     Don't have an account? Sign Up
                                 </Typography>
                             </Link>
