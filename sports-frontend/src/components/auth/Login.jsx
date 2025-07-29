@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import {
     Container,
     Paper,
@@ -8,8 +9,8 @@ import {
     Box,
     Alert,
     CircularProgress
-} from '@mui/materials'
-import { useAuth } from '../../contexts/AuthContext'
+} from '@mui/material'
+import { useAuth } from '../../contexts/AuthContext.jsx'
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -19,7 +20,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const { login } = useAuth();
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({

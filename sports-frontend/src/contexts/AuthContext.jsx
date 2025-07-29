@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    axios.defaults.baseUrl = 'http://localhost:8080/api';
+    axios.defaults.baseURL = 'http://localhost:8080/api';
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (userData) => {
         try {
-            const response = await axios.post('/auth/register', userData);
+            const response = await axios.post('/auth/signup', userData);
             return { success: true, data: response.data };
         } catch (error) {
             console.error ('Registration error: ', error.response?.data || error.message);
