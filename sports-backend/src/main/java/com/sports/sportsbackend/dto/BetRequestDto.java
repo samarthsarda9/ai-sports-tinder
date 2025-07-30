@@ -1,31 +1,25 @@
 package com.sports.sportsbackend.dto;
 
 import com.sports.sportsbackend.model.Bet;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class BetDto {
-    private Long id;
-    private GameDto game;
+public class BetRequestDto {
     private String player;
     private String team;
     private String opponent;
     private Bet.Sport sport;
     private Bet.BetType type;
-    private Bet.OverUnder overUnder;
     private BigDecimal line;
+    private Bet.OverUnder overUnder;
     private BigDecimal odds;
-    private BigDecimal amount;
     private LocalDateTime gameTime;
-    private Bet.Status status;
     private String description;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+
+    private BigDecimal amount;
+
+    private Long gameId;
 }

@@ -1,6 +1,7 @@
 package com.sports.sportsbackend.service;
 
 import com.sports.sportsbackend.dto.BetDto;
+import com.sports.sportsbackend.dto.BetRequestDto;
 import com.sports.sportsbackend.dto.GameDto;
 import com.sports.sportsbackend.model.Bet;
 import com.sports.sportsbackend.model.Game;
@@ -40,7 +41,7 @@ public class BetService {
     }
 
     public List<BetDto> getActiveBets() {
-        return betRepository.findAllByStatus(Bet.BetStatus.ACTIVE).stream()
+        return betRepository.findAllByStatus(Bet.Status.ACTIVE).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
@@ -57,55 +58,63 @@ public class BetService {
     }
 
     public List<BetDto> getActiveBetsByUser(Long userId) {
-        return betRepository.findByUserIdAndStatus(userId, Bet.BetStatus.ACTIVE)
+        return betRepository.findByUserIdAndStatus(userId, Bet.Status.ACTIVE)
                 .stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public BetDto placeBet(Long gameId, BigDecimal betAmount, Bet.Winner winner, Long userId) {
+    public BetDto placeBet(BetRequestDto request, Long userId) {
         Profile profile = profileRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
-        if (profile.getWalletBalance().compareTo(BigDecimal.ZERO) < 0) {
-            throw new RuntimeException("Wallet balance is negative");
+        if (profile.getWalletBalance().compareTo(request.getAmount()) < 0) {
+            throw new RuntimeException("Insufficient balance");
         }
-        Game game = gameService.getGameEntityById(gameId)
+        Game game = gameService.getGameEntityById(request.getGameId())
                 .orElseThrow(() -> new RuntimeException("Game not found"));
         if (game.getStatus() != Game.GameStatus.UPCOMING) {
             throw new RuntimeException("Game is not upcoming");
         }
-        User user = userService.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+
         Bet bet = new Bet();
-        bet.setUser(user);
+        bet.setUser(profile.getUser());
         bet.setGame(game);
-        bet.setAmount(betAmount);
-        bet.setStatus(Bet.BetStatus.ACTIVE);
-        bet.setWinner(winner);
+        bet.setPlayer(request.getPlayer());
+        bet.setTeam(request.getTeam());
+        bet.setOpponent(request.getOpponent());
+        bet.setSport(request.getSport());
+        bet.setType(request.getType());
+        bet.setAmount(request.getAmount());
+        bet.setStatus(Bet.Status.ACTIVE);
+        bet.setLine(request.getLine());
+        bet.setOverUnder(request.getOverUnder());
+        bet.setGameTime(request.getGameTime());
+        bet.setDescription(request.getDescription());
+        bet.setOdds(request.getOdds());
 
         Bet savedBet = betRepository.save(bet);
 
-        profile.setWalletBalance(profile.getWalletBalance().subtract(bet.getAmount()));
+        profile.setWalletBalance(profile.getWalletBalance().subtract(request.getAmount()));
         profileRepository.save(profile);
         return convertToDto(savedBet);
     }
 
-    @Transactional
-    public BetDto updateBetStatus(Long id, Bet.BetStatus status) {
-        Bet bet = betRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Bet not found"));
-        bet.setStatus(status);
-        Bet updatedBet = betRepository.save(bet);
-
-        if (status == Bet.BetStatus.WON) {
-            Profile profile = profileRepository.findByUserId(bet.getUser().getId())
-                    .orElseThrow(() -> new RuntimeException("Profile not found"));
-            profile.setWalletBalance(profile.getWalletBalance().add(updatedBet.getPotentialWinnings()));
-            profileRepository.save(profile);
-        }
-        return convertToDto(updatedBet);
-    }
+//    @Transactional
+//    public BetDto updateBetStatus(Long id, Bet.BetStatus status) {
+//        Bet bet = betRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Bet not found"));
+//        bet.setStatus(status);
+//        Bet updatedBet = betRepository.save(bet);
+//
+//        if (status == Bet.BetStatus.WON) {
+//            Profile profile = profileRepository.findByUserId(bet.getUser().getId())
+//                    .orElseThrow(() -> new RuntimeException("Profile not found"));
+//            profile.setWalletBalance(profile.getWalletBalance().add(updatedBet.getPotentialWinnings()));
+//            profileRepository.save(profile);
+//        }
+//        return convertToDto(updatedBet);
+//    }
 
     private BetDto convertToDto(Bet bet) {
         GameDto gameDto = new GameDto(
@@ -123,10 +132,18 @@ public class BetService {
         return new BetDto(
                 bet.getId(),
                 gameDto,
+                bet.getPlayer(),
+                bet.getTeam(),
+                bet.getOpponent(),
+                bet.getSport(),
+                bet.getType(),
+                bet.getOverUnder(),
+                bet.getLine(),
+                bet.getOdds(),
                 bet.getAmount(),
-                bet.getWinner(),
+                bet.getGameTime(),
                 bet.getStatus(),
-                bet.getPotentialWinnings(),
+                bet.getDescription(),
                 bet.getCreatedAt(),
                 bet.getUpdatedAt()
         );

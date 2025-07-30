@@ -23,19 +23,60 @@ public class Bet {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
+    private String player;
+
+    @Column(nullable = false)
+    private String team;
+
+    private String opponent;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Bet.Sport sport;
+
+    @Column(name = "bet_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Bet.BetType type;
+
+    @Column(nullable = false)
+    private BigDecimal line;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Bet.OverUnder overUnder;
+
+    @Column(nullable = false)
+    private BigDecimal odds;
+
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Winner winner;
+    private LocalDateTime gameTime;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private BetStatus status = BetStatus.ACTIVE;
+    private Bet.Status status;
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal potentialWinnings;
+    @Column(length = 512)
+    private String description;
+
+    public enum Sport {
+        NBA, NFL, MLB, NHL, NCAAB, EPL, MLS, NCAAF, OTHER
+    }
+
+    public enum BetType {
+        POINTS, REBOUNDS, ASSISTS, PASSING, RUSHING, RECEIVING,
+            HITS, STRIKES, GOALS, SAVES, SPREAD, TOTAL_POINTS
+    }
+
+    public enum OverUnder {
+        OVER, UNDER
+    }
+
+    public enum Status {
+        ACTIVE, WON, LOST
+    }
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -44,21 +85,10 @@ public class Bet {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        if (potentialWinnings == null) {
-            potentialWinnings = amount.multiply(BigDecimal.valueOf(2));
-        }
     }
 
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
-    }
-
-    public enum Winner {
-        HOME, AWAY
-    }
-
-    public enum BetStatus {
-        ACTIVE, WON, LOST
     }
 }

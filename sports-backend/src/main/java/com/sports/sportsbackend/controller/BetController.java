@@ -1,6 +1,7 @@
 package com.sports.sportsbackend.controller;
 
 import com.sports.sportsbackend.dto.BetDto;
+import com.sports.sportsbackend.dto.BetRequestDto;
 import com.sports.sportsbackend.model.Bet;
 import com.sports.sportsbackend.model.User;
 import com.sports.sportsbackend.security.service.JwtService;
@@ -61,16 +62,10 @@ public class BetController {
     }
 
     @PostMapping
-    public ResponseEntity<?> placeBet(@RequestBody Map<String, Object> betDetails ) {
+    public ResponseEntity<?> placeBet(@RequestBody BetRequestDto request) {
         try {
-            Long gameId = Long.valueOf(betDetails.get("gameId").toString());
-            BigDecimal betAmount = new BigDecimal(betDetails.get("betAmount").toString());
-            String winnerStr = betDetails.get("winner").toString();
-
-            Bet.Winner winner = Bet.Winner.valueOf(winnerStr.toUpperCase());
-
             Long userId = getCurrentUserId();
-            BetDto placedBet = betService.placeBet(gameId, betAmount, winner, userId);
+            BetDto placedBet = betService.placeBet(request, userId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("placedBet", placedBet);
@@ -83,23 +78,23 @@ public class BetController {
         }
     }
 
-    @PutMapping("/{id}/status")
-    public ResponseEntity<?> updateBetStatus(@PathVariable Long id, @RequestBody Map<String, Object> betDetails) {
-        try {
-            String statusStr = betDetails.get("status").toString();
-            Bet.BetStatus status = Bet.BetStatus.valueOf(statusStr.toUpperCase());
-
-            BetDto updatedBet = betService.updateBetStatus(id, status);
-            Map<String, Object> response = new HashMap<>();
-            response.put("updatedBet", updatedBet);
-            response.put("message", "Bet updated successfully");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            Map<String, Object> error = new HashMap<>();
-            error.put("error", e.getMessage());
-            return ResponseEntity.badRequest().body(error);
-        }
-    }
+//    @PutMapping("/{id}/status")
+//    public ResponseEntity<?> updateBetStatus(@PathVariable Long id, @RequestBody BetRequestDto request) {
+//        try {
+//            String statusStr = request.get("status").toString();
+//            Bet.BetStatus status = Bet.BetStatus.valueOf(statusStr.toUpperCase());
+//
+//            BetDto updatedBet = betService.updateBetStatus(id, status);
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("updatedBet", updatedBet);
+//            response.put("message", "Bet updated successfully");
+//            return ResponseEntity.ok(response);
+//        } catch (Exception e) {
+//            Map<String, Object> error = new HashMap<>();
+//            error.put("error", e.getMessage());
+//            return ResponseEntity.badRequest().body(error);
+//        }
+//    }
 
     private Long getCurrentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

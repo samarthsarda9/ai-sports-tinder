@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface BetRepository extends JpaRepository<Bet, Long> {
 
-    Optional<Bet> findAllByStatus(Bet.BetStatus betStatus);
+    Optional<Bet> findAllByStatus(Bet.Status betStatus);
 
     List<Bet> findByUserId(Long userId);
 
-    List<Bet> findByUserIdAndStatus(Long userId, Bet.BetStatus betStatus);
+    List<Bet> findByUserIdAndStatus(Long userId, Bet.Status betStatus);
 }
