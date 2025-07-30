@@ -103,7 +103,7 @@ public class BetController {
         }
 
         String authHeader = getCurrentRequest().getHeader("Authorization");
-        if (authHeader != null || authHeader.startsWith("Bearer ")) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             try {
                 return jwtService.extractUserId(token);
