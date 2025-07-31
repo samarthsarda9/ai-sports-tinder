@@ -56,7 +56,10 @@ public class Bet {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Bet.Status status;
+    private Status status;
+
+    @Column(nullable = false)
+    private int confidence;
 
     @Column(length = 512)
     private String description;
@@ -67,7 +70,7 @@ public class Bet {
 
     public enum BetType {
         POINTS, REBOUNDS, ASSISTS, PASSING, RUSHING, RECEIVING,
-            HITS, STRIKES, GOALS, SAVES, SPREAD, TOTAL_POINTS
+            HITS, STRIKES, GOALS, SAVES, SPREAD, TOTAL_POINTS, H2H
     }
 
     public enum OverUnder {

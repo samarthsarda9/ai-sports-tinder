@@ -18,6 +18,7 @@ public class BetRequestDto {
     private BigDecimal odds;
     private LocalDateTime gameTime;
     private String description;
+    private int confidence;
 
     private BigDecimal amount;
 

@@ -1,7 +1,7 @@
 package com.sports.sportsbackend.service;
 
-import com.sports.sportsbackend.dto.AIResponseDto;
-import com.sports.sportsbackend.dto.BetRequestDto;
+import com.sports.sportsbackend.dto.*;
+import com.sports.sportsbackend.model.Bet;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,12 +11,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class RecommendationService {
 
     private final WebClient webClient;
+    private final OddsApiService oddsApiService;
 
     @Value("${geminiapi.url}")
     private String geminiApiUrl;
@@ -24,8 +29,122 @@ public class RecommendationService {
     @Value("${geminiapi.key}")
     private String geminiApiKey;
 
-    public RecommendationService(WebClient.Builder webClientBuilder) {
+    public RecommendationService(WebClient.Builder webClientBuilder, OddsApiService oddsApiService) {
         this.webClient = webClientBuilder.build();
+        this.oddsApiService = oddsApiService;
+    }
+
+    public List<BetDto> getRecommendations(String sport) {
+        OddsApiDto[] oddsData = oddsApiService.getOdds(sport, "us", "spreads,total,h2h");
+        List<BetDto> recommendations = new ArrayList<>();
+        for (OddsApiDto game : oddsData) {
+            List<BetRequestDto> potentialBets = createBetRequestFromData(game);
+            for (BetRequestDto potentialBet : potentialBets) {
+                AIResponseDto analysis = getRecommendation(potentialBet);
+                recommendations.add(createBetDto(potentialBet, analysis, game));
+            }
+        }
+        return recommendations;
+    }
+
+    private List<BetRequestDto> createBetRequestFromData(OddsApiDto game) {
+        List<BetRequestDto> requests = new ArrayList<>();
+        if (game.getBookmakers() == null || game.getBookmakers().isEmpty()) {
+            return requests;
+        }
+
+        OddsApiDto.Bookmaker bookmaker = game.getBookmakers().get(0);
+
+        Optional<OddsApiDto.Market> market = bookmaker.getMarkets().stream()
+                .filter(m -> "spreads".equals(m.getKey()))
+                .findFirst();
+
+        if (market.isPresent()) {
+            OddsApiDto.Market marketData = market.get();
+            for (OddsApiDto.Outcome outcome : marketData.getOutcomes()) {
+                BetRequestDto spreadBet = new BetRequestDto();
+                spreadBet.setGameId(Long.parseLong(game.getId().replaceAll("[^0-9]", "")));
+                spreadBet.setPlayer(outcome.getName());
+                spreadBet.setTeam(outcome.getName());
+                spreadBet.setOpponent(outcome.getName().equals(game.getHome_team()) ? game.getAway_team() : game.getHome_team());
+                spreadBet.setSport(Bet.Sport.valueOf(game.getSport()));
+                spreadBet.setType(Bet.BetType.SPREAD);
+                spreadBet.setLine(BigDecimal.valueOf(outcome.getPoint()));
+                spreadBet.setOdds(BigDecimal.valueOf(outcome.getPrice()));
+                spreadBet.setOverUnder(outcome.getPoint() >= 0 ? Bet.OverUnder.OVER : Bet.OverUnder.UNDER);
+                spreadBet.setGameTime(game.getCommenceTime());
+                spreadBet.setDescription(String.format("%s %s", outcome.getName(), outcome.getPoint()));
+                requests.add(spreadBet);
+            }
+        }
+
+        Optional<OddsApiDto.Market> totalsMarketOpt = bookmaker.getMarkets().stream()
+                .filter(m -> "totals".equals(m.getKey()))
+                .findFirst();
+
+        if (totalsMarketOpt.isPresent()) {
+            OddsApiDto.Market totalsMarket = totalsMarketOpt.get();
+            for (OddsApiDto.Outcome outcome : totalsMarket.getOutcomes()) {
+                BetRequestDto totalBet = new BetRequestDto();
+                totalBet.setGameId(Long.parseLong(game.getId().replaceAll("[^0-9]", "")));
+                totalBet.setPlayer("Total Score"); // Player is conceptual here
+                totalBet.setTeam(game.getHome_team());
+                totalBet.setOpponent(game.getAway_team());
+                totalBet.setSport(Bet.Sport.valueOf(game.getSport()));
+                totalBet.setType(Bet.BetType.TOTAL_POINTS);
+                totalBet.setLine(BigDecimal.valueOf(outcome.getPoint()));
+                totalBet.setOdds(BigDecimal.valueOf(outcome.getPrice()));
+                totalBet.setOverUnder("Over".equalsIgnoreCase(outcome.getName()) ? Bet.OverUnder.OVER : Bet.OverUnder.UNDER);
+                totalBet.setGameTime(game.getCommenceTime());
+                totalBet.setDescription(String.format("Total Points %s %s", outcome.getName(), outcome.getPoint()));
+                requests.add(totalBet);
+            }
+        }
+
+        Optional<OddsApiDto.Market> h2hMarketOpt = bookmaker.getMarkets().stream()
+                .filter(m -> "h2h".equals(m.getKey()))
+                .findFirst();
+
+        if (h2hMarketOpt.isPresent()) {
+            for (OddsApiDto.Outcome outcome : h2hMarketOpt.get().getOutcomes()) {
+                BetRequestDto h2hBet = new BetRequestDto();
+                h2hBet.setGameId(Long.parseLong(game.getId().replaceAll("[^0-9]", "")));
+                h2hBet.setPlayer(outcome.getName()); // For team bets, the player is the team
+                h2hBet.setTeam(outcome.getName());
+                h2hBet.setOpponent(outcome.getName().equals(game.getHome_team()) ? game.getAway_team() : game.getHome_team());
+                h2hBet.setSport(Bet.Sport.valueOf(game.getSport()));
+                h2hBet.setType(Bet.BetType.H2H);
+                h2hBet.setLine(BigDecimal.ZERO); // H2H bets have no line
+                h2hBet.setOdds(BigDecimal.valueOf(outcome.getPrice()));
+                h2hBet.setGameTime(game.getCommenceTime());
+                h2hBet.setDescription(String.format("%s Moneyline", outcome.getName()));
+                requests.add(h2hBet);
+            }
+        }
+        return requests;
+    }
+
+    private BetDto createBetDto(BetRequestDto request, AIResponseDto analysis, OddsApiDto game) {
+        BetDto bet = new BetDto();
+        bet.setPlayer(request.getPlayer());
+        bet.setTeam(request.getTeam());
+        bet.setOpponent(request.getOpponent());
+        bet.setSport(request.getSport());
+        bet.setType(request.getType());
+        bet.setLine(request.getLine());
+        bet.setOdds(request.getOdds());
+        bet.setOverUnder(request.getOverUnder());
+        bet.setGameTime(game.getCommenceTime());
+
+        bet.setDescription(analysis.getReasoning());
+        bet.setConfidence(analysis.getConfidence());
+
+        GameDto gameDto = new GameDto();
+        gameDto.setId(Long.parseLong(game.getId().replaceAll("[^0-9]", "")));
+        gameDto.setHomeTeam(game.getHome_team());
+        gameDto.setAwayTeam(game.getAway_team());
+        bet.setGame(gameDto);
+        return bet;
     }
 
     public AIResponseDto getRecommendation(BetRequestDto request) {

@@ -92,6 +92,7 @@ public class BetService {
         bet.setGameTime(request.getGameTime());
         bet.setDescription(request.getDescription());
         bet.setOdds(request.getOdds());
+        bet.setConfidence(request.getConfidence());
 
         Bet savedBet = betRepository.save(bet);
 
@@ -143,12 +144,10 @@ public class BetService {
                 bet.getAmount(),
                 bet.getGameTime(),
                 bet.getStatus(),
+                bet.getConfidence(),
                 bet.getDescription(),
                 bet.getCreatedAt(),
                 bet.getUpdatedAt()
         );
     }
-
-
-
 }
