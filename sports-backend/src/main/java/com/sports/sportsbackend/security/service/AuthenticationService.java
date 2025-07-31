@@ -54,6 +54,7 @@ public class AuthenticationService {
 
         Profile profile = new Profile();
         profile.setUser(user);
+        profile.setUsername(savedUser.getUsername());
         profileRepository.save(profile);
 
         return savedUser;

@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/odds/**").permitAll()
+                        .requestMatchers("/api/recommendation/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

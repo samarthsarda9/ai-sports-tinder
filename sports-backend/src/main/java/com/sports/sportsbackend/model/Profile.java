@@ -19,8 +19,26 @@ public class Profile {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
+    private String username;
+
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal walletBalance = new BigDecimal("1000.00");
+
+    @Column(nullable = false)
+    private int totalBets;
+
+    @Column(nullable = false)
+    private int wins;
+
+    @Column(nullable = false)
+    private int losses;
+
+    @Column(nullable = false)
+    private double winRate;
+
+    @Column(nullable = false)
+    private int streak;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
