@@ -3,7 +3,6 @@ package com.sports.sportsbackend.service;
 import com.sports.sportsbackend.dto.*;
 import com.sports.sportsbackend.model.Bet;
 import org.json.JSONObject;
-import org.json.JSONArray;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -35,7 +34,7 @@ public class RecommendationService {
     }
 
     public List<BetDto> getRecommendations(String sport) {
-        OddsApiDto[] oddsData = oddsApiService.getOdds(sport, "us", "spreads,total,h2h");
+        OddsApiDto[] oddsData = oddsApiService.getOdds(sport, "us", "spreads,totals,h2h");
         List<BetDto> recommendations = new ArrayList<>();
         for (OddsApiDto game : oddsData) {
             List<BetRequestDto> potentialBets = createBetRequestFromData(game);
@@ -140,7 +139,7 @@ public class RecommendationService {
         bet.setConfidence(analysis.getConfidence());
 
         GameDto gameDto = new GameDto();
-        gameDto.setId(Long.parseLong(game.getId().replaceAll("[^0-9]", "")));
+        gameDto.setId(game.getId());
         gameDto.setHomeTeam(game.getHome_team());
         gameDto.setAwayTeam(game.getAway_team());
         bet.setGame(gameDto);

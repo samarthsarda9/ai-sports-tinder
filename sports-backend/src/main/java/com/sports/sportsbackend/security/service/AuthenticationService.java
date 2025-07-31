@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -40,6 +41,7 @@ public class AuthenticationService {
         this.emailService = emailService;
     }
 
+    @Transactional
     public User signup(RegisterDto input) {
         User user = new User(input.getUsername(),
                 input.getEmail(),
@@ -50,6 +52,7 @@ public class AuthenticationService {
         user.setVerificationExpiration(LocalDateTime.now().plusMinutes(15));
         user.setEnabled(false);
         User savedUser = userRepository.save(user);
+        System.out.println("SUCCESS: User with ID " + savedUser.getId() + " and email " + savedUser.getEmail() + " was saved to the database.");
         sendVerificationEmail(user);
 
         Profile profile = new Profile();

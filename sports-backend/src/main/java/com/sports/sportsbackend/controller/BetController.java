@@ -78,6 +78,16 @@ public class BetController {
         }
     }
 
+    private Long getCurrentUserId() {
+        System.out.println("HERE: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()
+                || !(authentication.getPrincipal() instanceof User)) {
+            throw new RuntimeException("User not authenticated");
+        }
+        return ((User) authentication.getPrincipal()).getId();
+    }
+
 //    @PutMapping("/{id}/status")
 //    public ResponseEntity<?> updateBetStatus(@PathVariable Long id, @RequestBody BetRequestDto request) {
 //        try {
@@ -96,37 +106,4 @@ public class BetController {
 //        }
 //    }
 
-    private Long getCurrentUserId() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new RuntimeException("User not authenticated");
-        }
-
-        String authHeader = getCurrentRequest().getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            try {
-                return jwtService.extractUserId(token);
-            } catch (Exception e) {
-                return getCurrentUserIdFromDatabase(auth);
-            }
-        }
-        return getCurrentUserIdFromDatabase(auth);
-    }
-
-    private Long getCurrentUserIdFromDatabase(Authentication auth) {
-        String userEmail = auth.getName();
-        User user = userService.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getId();
-    }
-
-    private jakarta.servlet.http.HttpServletRequest getCurrentRequest() {
-        try {
-            return ((jakarta.servlet.http.HttpServletRequest) org.springframework.web.context.request.RequestContextHolder
-                    .currentRequestAttributes());
-        } catch (Exception e) {
-            throw new RuntimeException("Could not get current request attributes");
-        }
-    }
 }
