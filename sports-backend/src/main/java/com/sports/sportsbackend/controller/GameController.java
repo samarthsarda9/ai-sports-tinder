@@ -28,7 +28,7 @@ public class GameController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GameDto> getGameById(@PathVariable("id") Long id) {
+    public ResponseEntity<GameDto> getGameById(@PathVariable("id") String id) {
         Optional<GameDto> game = gameService.getGameById(id);
         return game.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -40,13 +40,13 @@ public class GameController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GameDto> updateGame(@PathVariable("id") Long id, @RequestBody Game game) {
+    public ResponseEntity<GameDto> updateGame(@PathVariable("id") String id, @RequestBody Game game) {
         GameDto updatedGame = gameService.updateGame(id, game);
         return ResponseEntity.ok(updatedGame);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<GameDto> deleteGame(@PathVariable("id") Long id) {
+    public ResponseEntity<GameDto> deleteGame(@PathVariable("id") String id) {
         gameService.deleteGame(id);
         return ResponseEntity.noContent().build();
     }

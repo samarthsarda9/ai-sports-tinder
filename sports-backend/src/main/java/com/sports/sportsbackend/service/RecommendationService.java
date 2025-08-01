@@ -62,7 +62,7 @@ public class RecommendationService {
             OddsApiDto.Market marketData = market.get();
             for (OddsApiDto.Outcome outcome : marketData.getOutcomes()) {
                 BetRequestDto spreadBet = new BetRequestDto();
-                spreadBet.setGameId(Long.parseLong(game.getId().replaceAll("[^0-9]", "")));
+                spreadBet.setGameId(game.getId());
                 spreadBet.setPlayer(outcome.getName());
                 spreadBet.setTeam(outcome.getName());
                 spreadBet.setOpponent(outcome.getName().equals(game.getHome_team()) ? game.getAway_team() : game.getHome_team());
@@ -85,7 +85,7 @@ public class RecommendationService {
             OddsApiDto.Market totalsMarket = totalsMarketOpt.get();
             for (OddsApiDto.Outcome outcome : totalsMarket.getOutcomes()) {
                 BetRequestDto totalBet = new BetRequestDto();
-                totalBet.setGameId(Long.parseLong(game.getId().replaceAll("[^0-9]", "")));
+                totalBet.setGameId(game.getId());
                 totalBet.setPlayer("Total Score"); // Player is conceptual here
                 totalBet.setTeam(game.getHome_team());
                 totalBet.setOpponent(game.getAway_team());
@@ -107,7 +107,7 @@ public class RecommendationService {
         if (h2hMarketOpt.isPresent()) {
             for (OddsApiDto.Outcome outcome : h2hMarketOpt.get().getOutcomes()) {
                 BetRequestDto h2hBet = new BetRequestDto();
-                h2hBet.setGameId(Long.parseLong(game.getId().replaceAll("[^0-9]", "")));
+                h2hBet.setGameId(game.getId());
                 h2hBet.setPlayer(outcome.getName()); // For team bets, the player is the team
                 h2hBet.setTeam(outcome.getName());
                 h2hBet.setOpponent(outcome.getName().equals(game.getHome_team()) ? game.getAway_team() : game.getHome_team());
@@ -218,6 +218,5 @@ public class RecommendationService {
                 request.getOdds()
         );
         return prompt;
-
     }
 }

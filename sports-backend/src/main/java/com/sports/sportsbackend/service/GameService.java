@@ -29,12 +29,12 @@ public class GameService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<GameDto> getGameById(Long id) {
+    public Optional<GameDto> getGameById(String id) {
         Optional<Game> game = gameRepository.findById(id);
         return game.map(this::convertToDto);
     }
 
-    public Optional<Game> getGameEntityById(Long id) {
+    public Optional<Game> getGameEntityById(String id) {
         return gameRepository.findById(id);
     }
 
@@ -44,7 +44,7 @@ public class GameService {
         return convertToDto(savedGame);
     }
 
-    public GameDto updateGame(Long id, Game game) {
+    public GameDto updateGame(String id, Game game) {
         Game gameToUpdate = gameRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("game not found"));
         gameToUpdate.setHomeTeam(game.getHomeTeam());
@@ -57,7 +57,7 @@ public class GameService {
         return convertToDto(gameRepository.save(gameToUpdate));
     }
 
-    public void deleteGame(Long id) {
+    public void deleteGame(String id) {
         gameRepository.deleteById(id);
     }
 

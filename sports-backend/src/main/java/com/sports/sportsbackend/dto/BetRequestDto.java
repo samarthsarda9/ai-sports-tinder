@@ -22,5 +22,5 @@ public class BetRequestDto {
 
     private BigDecimal amount;
 
-    private Long gameId;
+    private String gameId;
 }
