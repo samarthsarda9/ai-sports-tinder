@@ -23,10 +23,4 @@ public class RecommendationController {
         List<BetDto> response = recommendationService.getRecommendations(sport);
         return ResponseEntity.ok(response);
     }
-
-    @GetMapping("/testing")
-    public ResponseEntity<String> testing(@RequestParam String sport) {
-        String response = recommendationService.testing(sport);
-        return ResponseEntity.ok(response);
-    }
 }
