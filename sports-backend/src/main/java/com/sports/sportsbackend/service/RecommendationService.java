@@ -216,64 +216,6 @@ public class RecommendationService {
         };
     }
 
-    private BetDto createBetDto(BetRequestDto request, AIResponseDto analysis, OddsApiDto game) {
-        BetDto bet = new BetDto();
-        bet.setPlayer(request.getPlayer());
-        bet.setTeam(request.getTeam());
-        bet.setOpponent(request.getOpponent());
-        bet.setSport(request.getSport());
-        bet.setType(request.getType());
-        bet.setLine(request.getLine());
-        bet.setOdds(request.getOdds());
-        bet.setOverUnder(request.getOverUnder());
-        bet.setGameTime(game.getCommenceTime());
-
-        bet.setDescription(analysis.getReasoning());
-        bet.setConfidence(analysis.getConfidence());
-
-        GameDto gameDto = new GameDto();
-        gameDto.setId(game.getId());
-        gameDto.setHomeTeam(game.getHomeTeam());
-        gameDto.setAwayTeam(game.getAwayTeam());
-        bet.setGame(gameDto);
-        return bet;
-    }
-
-    private String buildPrompt(BetRequestDto request) {
-        String prompt = String.format(
-                "Act as an expert sports betting analyst. Your task is to analyze the following player prop bet and provide a detailed, data-driven recommendation.%n%n" +
-                        "**Bet Details:**%n" +
-                        "- **Sport:** %s%n" +
-                        "- **Player:** %s%n" +
-                        "- **Team:** %s%n" +
-                        "- **Opponent:** %s%n" +
-                        "- **Game Time:** %s%n" +
-                        "- **Bet Type:** %s on the player's %s%n" +
-                        "- **Line:** %s %s%n" +
-                        "- **Odds:** %s%n%n" +
-                        "**Your Analysis Must Consider:**%n" +
-                        "- The player's recent performance and consistency.%n" +
-                        "- The matchup favorability against the opposing team's defense.%n" +
-                        "- The implied probability based on the provided odds.%n" +
-                        "- Any potential situational factors (e.g., rivalry game, travel).%n%n" +
-                        "**Response Format:**%n" +
-                        "Respond ONLY with a raw JSON object. Do not include any introductory text, explanations, or markdown formatting like ```json. The JSON object must conform to the following structure:%n" +
-                        "{\"recommendation\": \"<'Strong Bet', 'Good Bet', 'Risky Bet', or 'Avoid'>\", \"reasoning\": \"<A concise, data-driven paragraph explaining your recommendation.>\", " +
-                        "\"confidence\": <A number between 0 and 100 representing your confidence in this bet.>, \"keyFactors\": [\"<A key factor supporting your analysis>\", " +
-                        "\"<Another key factor>\"], \"riskLevel\": \"<'Low', 'Medium', or 'High'>\"}",
-                request.getSport(),
-                request.getPlayer(),
-                request.getTeam(),
-                request.getOpponent(),
-                request.getGameTime().toString(),
-                request.getType(),
-                request.getDescription(),
-                request.getOverUnder(),
-                request.getLine(),
-                request.getOdds()
-        );
-        return prompt;
-    }
 
     private String buildBatchPrompt(List<BetRequestDto> requests) {
         StringBuilder betsJson = new StringBuilder("[");
@@ -291,6 +233,7 @@ public class RecommendationService {
 
         return String.format(
                 "Act as an expert sports betting analyst. Analyze the following list of bets and return a JSON array where each object corresponds to a bet in the input list. " +
+                        "Analyze each bet as its own bet without reference to previous bets." +
                         "Input Bets:%n%s%n%n" +
                         "Response Format:%n" +
                         "Respond ONLY with a raw JSON object. Do not include any introductory text, explanations, or markdown formatting like ```json. The JSON object must conform to the following structure:%n" +
