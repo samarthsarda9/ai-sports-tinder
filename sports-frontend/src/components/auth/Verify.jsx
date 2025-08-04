@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import {
-    Container,
-    Paper,
-    TextField,
-    Button,
-    Typography,
-    Box,
-    Alert,
-    CircularProgress
-} from '@mui/material'
 import { useAuth } from '../../contexts/AuthContext.jsx'
+import { Check, LogIn, RefreshCcw } from 'lucide-react'
 
 const Verify = () => {
     const[searchParams] = useSearchParams();
@@ -81,86 +72,59 @@ const Verify = () => {
     }
 
     return (
-        <Container maxWidth='sm'>
-            <Box 
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignContent: 'center'
-                }}
-            >
-                <Paper 
-                    elevation={3}
-                    sx={{
-                       padding: 4,
-                       display: 'flex',
-                       flexDirection: 'column',
-                       alignItems: 'center',
-                       width: '100%' 
-                    }}
-                >
-                    <Typography component="h1" variant="h4" gutterBottom>
-                        Verify Email
-                    </Typography>
-                    <Typography variant="body1" sx={{ mb: 3, textAlign: 'center' }}>
-                        Please enter the veriifcation code sent to your email.
-                    </Typography>
+        <div className='min-h-screen bg-gray-900 text-white flex items-center justify-center p-4'>
+            <div className='w-full max-w-md'>
+                <div className='text-center mb-8'>
+                    <h1 className="text-4xl font-bold text-blue-400">Email Verification</h1>
+                    <p className='text-gray-400'>Please enter the verification code sent to your email</p>
+                </div>
+
+                <form onSubmit={handleVerify} className='bg-gray-800 p-8 rounded-2xl shadow-2xl space-y-6'>
                     {error && (
-                        <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+                        <div className='bg-red-500/20 text-red-300 p-3 rounded-lg text-center'>
                             {error}
-                        </Alert>
+                        </div>
                     )}
 
                     {success && (
-                        <Alert severity="success" sx={{ width: '100%', mb: 2 }}>
+                        <div className='bg-green-500/20 text-green-300 p-3 rounded-lg text-center'>
                             {success}
-                        </Alert>
+                        </div>
                     )}
 
-                    <Box component='form' onSubmit={handleVerify} sx={{ width: '100%' }}>
-                        <TextField
-                            margin="normal"
+                    <div className='relative'>
+                        <Check className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <input 
+                            name='verificationCode'
+                            id='verificationCode'
+                            placeholder='Enter 6-digit code'
                             required
-                            fullWidth
-                            id="verificationCode"
-                            label="Verification Code"
-                            name="verificationCode"
                             value={formData.verificationCode}
                             onChange={handleChange}
-                            placeholder="Enter 6-digit code"
+                            className="w-full bg-gray-700 border border-gray-600 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                         />
-                        <Button 
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                            disabled={loading}
-                        >
-                            {loading ? <CircularProgress size={24} /> : 'Verify Email'}
-                        </Button>
+                    </div>
 
-                        <Button 
-                            fullWidth
-                            variant="outlined"
-                            onClick={handleResend}
-                            disabled={resendLoading}
-                            sx={{ mb: 2 }}
-                        >
-                            {resendLoading ? <CircularProgress size={24} /> : 'Resend Code'}
-                        </Button>
-
-                        <Box sx={{ textAlign: 'center' }}>
-                            <Link to="/login" style={{ textDecoration: 'none' }}>
-                                <Typography variant="body2" color="primary">
-                                    Back to Login
-                                </Typography>
-                            </Link>
-                        </Box>
-                    </Box>
-                </Paper>
-            </Box>
-        </Container>
+                    <button 
+                        type='submit'
+                        disabled={loading}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center disabled:bg-gray-500"
+                    >
+                            {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : <LogIn className="mr-2" size={20} />}
+                            {loading ? 'Verifying...' : 'Verify'}
+                    </button>
+                    
+                    <button
+                        disabled={resendLoading}
+                        onClick={handleResend}
+                        className="w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center disabled:bg-gray-500"
+                    >
+                        <RefreshCcw className="absolute left-208 text-gray-400" size={20} />
+                        {resendLoading ? 'Resending...' : 'Resend Verification Code'}
+                    </button>
+                </form>
+            </div>
+        </div>
     );
 }
 
