@@ -44,8 +44,8 @@ const Verify = () => {
         if (result.success) {
             setSuccess('Account Verified!');
             setTimeout(() => {
-                navigate('/login');
-            }, 2000);
+                navigate('/');
+            }, 500);
         } else {
             setError(result.error);
         }
@@ -57,7 +57,7 @@ const Verify = () => {
             setError('Please enter your email address');
             return;
         }
-        setResentLoading(true);
+        setResendLoading(true);
         setError('');
         setSuccess('');
 
@@ -115,11 +115,12 @@ const Verify = () => {
                     </button>
                     
                     <button
+                        type='button'
                         disabled={resendLoading}
                         onClick={handleResend}
                         className="w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center disabled:bg-gray-500"
                     >
-                        <RefreshCcw className="absolute left-208 text-gray-400" size={20} />
+                        {resendLoading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : <RefreshCcw className="mr-2" size={20} />}
                         {resendLoading ? 'Resending...' : 'Resend Verification Code'}
                     </button>
                 </form>

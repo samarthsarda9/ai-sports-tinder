@@ -52,7 +52,6 @@ public class AuthenticationService {
         user.setVerificationExpiration(LocalDateTime.now().plusMinutes(15));
         user.setEnabled(false);
         User savedUser = userRepository.save(user);
-        System.out.println("SUCCESS: User with ID " + savedUser.getId() + " and email " + savedUser.getEmail() + " was saved to the database.");
         sendVerificationEmail(user);
 
         Profile profile = new Profile();

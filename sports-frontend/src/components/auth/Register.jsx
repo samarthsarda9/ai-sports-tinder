@@ -57,7 +57,7 @@ const Register = () => {
             setSuccess('Registration Successful! Please check your email for your verification code.');
             setTimeout(() => {
                 navigate(`/verify?email=${encodeURIComponent(formData.email)}`);
-            }, 2000);
+            }, 500);
         } else {
             setError(result.error);
         }
@@ -165,4 +165,4 @@ const Register = () => {
     );
 }
 
-export default Register
+export default Register;

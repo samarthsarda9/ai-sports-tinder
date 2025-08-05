@@ -1,0 +1,58 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import PropTypes from 'prop-types';
+
+const SportSelector = ({
+    selectedSport,
+    availableSports,
+    onSportChange,
+    loading
+}) => {
+    const sportIcons = {
+        'basketball_nba': '🏀',
+        'americanfootball_nfl': '🏈',
+        'baseball_mlb': '⚾',
+        'icehockey_nhl': '🏒',
+        'basketball_ncaab': '🏀',
+        'soccer_epl': '⚽',
+        'soccer_usa_mls': '⚽'
+    };
+
+    return (
+        <div className='bg-white/10 backdrop-blur-lg rounded-lg p-4 mb-6'>
+            <h3 className='text-white font-semibold mb-3'>Select Sport</h3>
+            <div className='grid grid-cols-3 gap-2'>
+                {Object.entries(availableSports).map(([sportKey, sportName]) => (
+                    <motion.button 
+                        key={sportKey}
+                        onClick={() => onSportChange(sportKey)}
+                        disabled={loading}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`p-3 rounded-lg text-center transition-all duration-200 $(
+                            selectedSport === sportKey
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'bg-white/20 text-blue-200 hover:bg-white/30')
+                        } ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                    >
+                        <div className='text-2xl mb-1'>
+                            {sportIcons[sportKey] || '🏆'}
+                        </div>
+                        <div className='text-xs font-medium'>
+                            {sportName}
+                        </div>
+                    </motion.button>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+SportSelector.PropTypes = {
+    selectedSport: PropTypes.string.isRequired,
+    availableSports: PropTypes.objectOf(PropTypes.string).isRequired,
+    onSportChange: PropTypes.func.isRequired,
+    loading: PropTypes.bool.isRequired
+};
+
+export default SportSelector;

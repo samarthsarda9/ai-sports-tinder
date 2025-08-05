@@ -5,10 +5,11 @@ import Verify from './components/auth/Verify.jsx'
 import { useAuth } from './contexts/AuthContext.jsx'
 import { Route, Routes, Navigate } from 'react-router-dom'
 
-// const PrivateRoute = ({ children }) => {
-//   const { isAuthenticated } = useAuth();
-//   return isAuthenticated ? children : <Navigate to="/login" />;
-// }
+const PrivateRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return <div>Loading...</div>
+  return isAuthenticated ? children : <Navigate to="/login" />;
+}
 
 
 function App() {
@@ -19,6 +20,13 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify" element={<Verify />} />
+          <Route 
+            path="/" element={
+              <PrivateRoute>
+                
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </main>
     </div>
