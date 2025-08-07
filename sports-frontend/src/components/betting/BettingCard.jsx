@@ -118,7 +118,7 @@ const BettingCard = ({ bet, onSwipe, onCardClick }) => {
                     </div>
 
                     {/*Game Time*/}
-                    <div className='flex items-center space-x-2 text-sm text-gray-500'>
+                    <div className='flex items-center justify-center space-x-2 text-sm text-gray-500'>
                         <Clock className='w-4 h-4' />
                         <span>{formatGameTime(bet.gameTime)}</span>
                     </div>

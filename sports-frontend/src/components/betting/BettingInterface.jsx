@@ -146,39 +146,12 @@ const BettingInterface = () => {
             {/* Main Content */}
             <div className="max-w-md mx-auto px-4 py-6">
                 <div className="space-y-6">
-                    {/* API Status and Controls */}
-                    <div className="bg-white/10 backdrop-blur-lg rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-white font-semibold">Live Odds</h3>
-                            <div className="flex items-center space-x-2">
-                                {loading && (
-                                    <RefreshCw className="w-4 h-4 text-blue-300 animate-spin" />
-                                )}
-                                <button
-                                    onClick={refreshBets}
-                                    disabled={loading}
-                                    className="text-blue-300 hover:text-white transition-colors disabled:opacity-50"
-                                >
-                                    <RefreshCw className="w-4 h-4" />
-                                </button>
-                            </div>
+                    {error && (
+                        <div className="flex items-center space-x-2 text-red-300 text-sm mb-3">
+                            <AlertCircle className="w-4 h-4" />
+                            <span>{error}</span>
                         </div>
-
-                        {/* {!isApiKeyValid && (
-                            <div className="flex items-center space-x-2 text-yellow-300 text-sm mb-3">
-                                <AlertCircle className="w-4 h-4" />
-                                <span>API key not configured. Using demo mode.</span>
-                            </div>
-                        )} */}
-
-                        {error && (
-                            <div className="flex items-center space-x-2 text-red-300 text-sm mb-3">
-                                <AlertCircle className="w-4 h-4" />
-                                <span>{error}</span>
-                            </div>
-                        )}
-                    </div>
-
+                    )}
                     {/* Sport Selector */}
                     <SportSelector
                         selectedSport={selectedSport}

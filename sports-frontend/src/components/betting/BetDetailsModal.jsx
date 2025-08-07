@@ -6,9 +6,9 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
     const [betAmount, setBetAmount] = useState(50);
 
     if (!bet) return null;
-    
+
     const getRecommendationIcon = (recommendation) => {
-        switch(recommendation) {
+        switch (recommendation) {
             case 'Strong Bet': return <CheckCircle className='w-5 h-5 text-green-600' />;
             case 'Good Bet': return <CheckCircle className='w-5 h-5 text-blue-600' />;
             case 'Risky Bet': return <AlertTriangle className='w-5 h-5 text-yellow-600' />;
@@ -16,9 +16,9 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
             default: return <Brain className='w-5 h-5 text-gray-600' />;
         }
     };
-    
+
     const getRecommendationColor = (recommendation) => {
-        switch(recommendation) {
+        switch (recommendation) {
             case 'Strong Bet': return 'text-green-600 bg-green-100';
             case 'Good Bet': return 'text-blue-600 bg-blue-100';
             case 'Risky Bet': return 'text-yellow-600 bg-yellow-100';
@@ -69,23 +69,21 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/**Header*/}
-                        <div className='bg-gradient-to-r from-blue-600 to-purple-600 text-white-p-6 rounded-t-2xl'>
-                            <div className='flex justify-between items-start'>
-                                <div>
-                                    <h2 className='text-2xl font-bold'>{bet.player}</h2>
-                                    <p className='text-blue-100 text-lg'>{bet.team} vs {bet.opponent}</p>
-                                    <p className='text-blue-100'>{bet.sport} • {bet.betType}</p>
-                                </div>
-                                <button
-                                    onClick={onClose}
-                                    className='text-white hover:text-blue-100 transition-colors'
-                                >
-                                    <X className='w-6 h-6' />
-                                </button>
+                        <div className='bg-gradient-to-r from-blue-600 to-purple-600 text-white-p-6 rounded-t-xl relative'>
+                            <div className='text-center'>
+                                <h2 className='text-white text-2xl font-bold mb-1 '>{bet.player}</h2>
+                                <p className='text-blue-100 text-lg mb-1'>{bet.team} vs {bet.opponent}</p>
+                                <p className='text-blue-100'>{bet.sport} • {bet.betType}</p>
                             </div>
+                            <button
+                                onClick={onClose}
+                                className='absolute top-3 right-3 text-white hover:text-blue-100 transition-colors'
+                            >
+                                <X className='w-6 h-6' />
+                            </button>
                         </div>
 
-                        <div className='p-6 space-y-6'>
+                        <div className='p-5 space-y-6'>
                             {/**Bet Details*/}
                             <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
                                 <div className='text-center p-4 bg-gray-50 rounded-lg'>
@@ -102,9 +100,8 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                                 </div>
                                 <div className='text-center p-4 bg-gray-50 rounded-lg'>
                                     <p className='text-sm text-gray-600'>Direction</p>
-                                    <div className={`flex items-center justify-center space-x-1 px-2 py-1 rounded-full mx-auto w-fit ${
-                                        bet.overUnder === 'Over' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                                    }`}>
+                                    <div className={`flex items-center justify-center space-x-1 px-2 py-1 rounded-full mx-auto w-fit ${bet.overUnder === 'Over' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                        }`}>
                                         {bet.overUnder === 'Over' ? (
                                             <TrendingUp className='w-4 h-4' />
                                         ) : (
@@ -185,7 +182,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                                         </label>
                                         <div className='relative'>
                                             <DollarSign className='absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400' />
-                                            <input 
+                                            <input
                                                 type='number'
                                                 value={betAmount}
                                                 onChange={(e) => setBetAmount(parseInt(e.target.value)) || 0}
