@@ -68,11 +68,33 @@ const BettingInterface = ({ user, setUser }) => {
         setIsModalOpen(true);
     };
 
-    const handlePlaceBet = (bet, amount) => {
-        setUser(prev => ({
-            ...prev,
-            virtualBalance: prev.virtualBalance - amount
-        }));
+    const handlePlaceBet = async (bet, amount) => {
+        const betData = {
+            player: bet.player,
+            team: bet.team,
+            opponent: bet.opponent,
+            sport: bet.sport,
+            type: bet.betType,
+            line: bet.line,
+            odds: bet.odds,
+            overUnder: bet.overUnder,
+            gameTime: bet.gameTime,
+            description: bet.description,
+            confidence: bet.aiAnalysis.confidence,
+            amount: amount,
+            gameId: bet.gameId
+        };
+
+        const result = await placeBet(betData);
+
+        if (result.sucess) {
+            setUser(prev => ({
+                ...prev,
+                virtualBalance: prev.virtualBalance - amount
+            }))
+        } else {
+            console.error (result.error);
+        }
     };
 
     const handleCloseModal = () => {
