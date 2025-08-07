@@ -105,9 +105,10 @@ public class RecommendationService {
             bet.setOdds(request.getOdds());
             bet.setOverUnder(request.getOverUnder());
             bet.setGameTime(request.getGameTime());
-
             bet.setDescription(analysis.getReasoning());
             bet.setConfidence(analysis.getConfidence());
+
+            bet.setAiResponse(analysis);
 
             GameDto gameDto = new GameDto();
             gameDto.setId(request.getGameId());

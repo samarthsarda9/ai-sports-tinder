@@ -1,5 +1,6 @@
 package com.sports.sportsbackend.service;
 
+import com.sports.sportsbackend.dto.AIResponseDto;
 import com.sports.sportsbackend.dto.BetDto;
 import com.sports.sportsbackend.dto.BetRequestDto;
 import com.sports.sportsbackend.dto.GameDto;
@@ -130,6 +131,16 @@ public class BetService {
                 bet.getGame().getCreatedAt(),
                 bet.getGame().getUpdatedAt()
         );
+
+        AIResponseDto analysis = null;
+        if (bet.getDescription() != null || bet.getConfidence() > 0) {
+            analysis = new AIResponseDto();
+            analysis.setReasoning(bet.getDescription());
+            analysis.setConfidence(bet.getConfidence());
+            analysis.setRecommendation(AIResponseDto.Recommendation.GOOD_BET);
+            analysis.setKeyFactors(new String[]{});
+            analysis.setRiskLevel(AIResponseDto.RiskLevel.MEDIUM);
+        }
         return new BetDto(
                 bet.getId(),
                 gameDto,
@@ -147,7 +158,8 @@ public class BetService {
                 bet.getConfidence(),
                 bet.getDescription(),
                 bet.getCreatedAt(),
-                bet.getUpdatedAt()
+                bet.getUpdatedAt(),
+                analysis
         );
     }
 }

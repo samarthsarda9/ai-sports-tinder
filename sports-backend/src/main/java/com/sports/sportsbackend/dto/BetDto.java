@@ -1,5 +1,6 @@
 package com.sports.sportsbackend.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sports.sportsbackend.model.Bet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,4 +30,7 @@ public class BetDto {
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @JsonProperty("aiAnalysis")
+    private AIResponseDto aiResponse;
 }

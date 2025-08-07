@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { x, TrendingUp, TrendingDown, Clock, DollarSign, Brain, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 
-const BetDetailsModal = ( bet, isOpen, onClose, onPlaceBet, userBalance ) => {
+const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
     const [betAmount, setBetAmount] = useState(50);
 
     if (!bet) return null;
