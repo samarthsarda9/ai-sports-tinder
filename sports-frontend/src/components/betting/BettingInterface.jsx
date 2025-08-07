@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, RefreshCw, AlertCircle, DollarSign } from 'lucide-react';
+import { Trophy, RefreshCw, AlertCircle, DollarSign, LogOut } from 'lucide-react';
 
 import BettingCard from './BettingCard';
 import SportSelector from './SportsSelector';
@@ -10,7 +10,7 @@ import { placeBet } from '../../service/betService';
 import { useAuth } from '../../contexts/AuthContext';
 
 const BettingInterface = () => {
-    const { user, setUser } = useAuth();
+    const { user, setUser, logout } = useAuth();
 
     const [currentBetIndex, setCurrentBetIndex] = useState(0);
     const [selectedBet, setSelectedBet] = useState(null);
@@ -66,12 +66,12 @@ const BettingInterface = () => {
         if (direction === 'right') {
             setSelectedBet(bet);
             setIsModalOpen(true);
+        } else {
+            setTimeout(() => {
+                setCurrentBetIndex(prev => Math.min(prev + 1, bets.length));
+                setSwipeDirection(null);
+            }, 300);
         }
-
-        setTimeout(() => {
-            setCurrentBetIndex(prev => Math.min(prev + 1, bets.length));
-            setSwipeDirection(null);
-        }, 300);
     };
 
     const handleCardClick = (bet) => {
@@ -114,6 +114,10 @@ const BettingInterface = () => {
         setIsModalOpen(false);
         setSelectedBet(null);
     };
+
+    const handleLogout = () => {
+        logout();
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">

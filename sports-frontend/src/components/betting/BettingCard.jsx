@@ -5,7 +5,7 @@ import { TrendingUp, TrendingDown, Target, Clock } from 'lucide-react'
 const BettingCard = ({ bet, onSwipe, onCardClick }) => {
 
     const handleDragEnd = (event, info) => {
-        const swipeThreshold = 50;
+        const swipeThreshold = 20;
         if (info.offset.x > swipeThreshold) {
             onSwipe('right', bet);
         } else if (info.offset.x < -swipeThreshold) {
@@ -85,7 +85,7 @@ const BettingCard = ({ bet, onSwipe, onCardClick }) => {
                         </div>
                         <div className='text-center'>
                             <p className='text-sm text-blue-100'>Confidence</p>
-                            <p className='text-2xl font-bold'>{bet.confidence}</p>
+                            <p className='text-2xl font-bold'>{bet.aiAnalysis.confidence}</p>
                         </div>
                     </div>
                 </div>
@@ -111,21 +111,10 @@ const BettingCard = ({ bet, onSwipe, onCardClick }) => {
 
                     {/*AI Analysis*/}
                     <div className='bg-gray-50 rounded-lg p-4 mb-4'>
-                        <div className='flex items-center justify-between mb-2'>
-                            <h4 className='font-semibold text-gray-800'>AI Analysis</h4>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRecommendationColor(bet.aiAnalysis.recommendation)}`}>
-                                {bet.aiAnalysis.recommendation}
-                            </span>
+                        <div className='flex items-center justify-center mb-2'>
+                            <h4 className='font-semibold text-gray-800'>Description</h4>
                         </div>
-                        <p className='text-sm text-gray-600 line-clamp-2'>{bet.aiAnalysis.reasoning}</p>
-                        <div className='flex items-center justify-between mt-2'>
-                            <span className='text-xs text-gray-500'>
-                                Confidence: {bet.aiAnalysis.confidence}%
-                            </span>
-                            <span className={`text-xs font-medium ${getRiskColor(bet.aiAnalysis.riskLevel)}`}>
-                                Risk: {bet.aiAnalysis.riskLevel}
-                            </span>
-                        </div>
+                        <p className='text-md text-gray-600 line-clamp-2'>{bet.description}</p>
                     </div>
 
                     {/*Game Time*/}

@@ -70,7 +70,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                     >
                         {/**Header*/}
                         <div className='bg-gradient-to-r from-blue-600 to-purple-600 text-white-p-6 rounded-t-2xl'>
-                            <div className='flex justify-center items-start'>
+                            <div className='flex justify-between items-start'>
                                 <div>
                                     <h2 className='text-2xl font-bold'>{bet.player}</h2>
                                     <p className='text-blue-100 text-lg'>{bet.team} vs {bet.opponent}</p>
@@ -98,7 +98,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                                 </div>
                                 <div className='text-center p-4 bg-gray-50 rounded-lg'>
                                     <p className='text-sm text-gray-600'>Confidence</p>
-                                    <p className='text-2xl font-bold text-gray-800'>{bet.confidence}</p>
+                                    <p className='text-2xl font-bold text-gray-800'>{bet.aiAnalysis.confidence}</p>
                                 </div>
                                 <div className='text-center p-4 bg-gray-50 rounded-lg'>
                                     <p className='text-sm text-gray-600'>Direction</p>
@@ -129,7 +129,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
 
                                 <div className='mb-4'>
                                     <h4 className='font-medium text-gray-800 mb-2'>Reasoning</h4>
-                                    <p className='text-gray-600'>{bet.aiAnalysis.recommendation}</p>
+                                    <p className='text-gray-600'>{bet.aiAnalysis.reasoning}</p>
                                 </div>
 
                                 <div className='grid grid-cols-2 gap-4 mb-4'>
@@ -188,7 +188,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                                             <input 
                                                 type='number'
                                                 value={betAmount}
-                                                onChange={(e) => setBetAmount(Math.max(10, Math.min(userBalance, parseInt(e.target.value) || 0)))}
+                                                onChange={(e) => setBetAmount(parseInt(e.target.value)) || 0}
                                                 className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                                                 min="10"
                                                 max={userBalance}
@@ -205,7 +205,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                                         </label>
                                         <div className='p-3 bg-green-50 rounded-lg'>
                                             <p className='text-lg font-bold text-green-700'>
-                                                ${calculatePayout(betAmount, bet.oods).toFixed(2)}
+                                                ${calculatePayout(betAmount, bet.odds).toFixed(2)}
                                             </p>
                                             <p className='text-sm text-green-600'>
                                                 Profit ${(calculatePayout(betAmount, bet.odds) - betAmount).toFixed(2)}
