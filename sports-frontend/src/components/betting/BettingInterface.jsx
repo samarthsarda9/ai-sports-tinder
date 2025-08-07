@@ -32,22 +32,25 @@ const BettingInterface = () => {
         { key: 'soccer_usa_mls', label: 'MLS' }
     ];
 
+    const getRecommendations = useCallback(async (sportKey) => {
+        setLoading(true);
+        setError('');
+        try {
+            const data = await fetchRecommendations(sportKey);
+            setBets(data);
+            setSelectedSport(sportKey)
+        } catch (error) {
+            setError('Failed to load betting recommendations.');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
     useEffect(() => {
-        const getRecommendations = async (sportKey) => {
-            setLoading(true);
-            setError('');
-            try {
-                const data = await fetchRecommendations(selectedSport);
-                setBets(data);
-                setSelectedSport(sportKey)
-            } catch (error) {
-                setError('Failed to load betting recommendations.');
-            } finally {
-                setLoading(false);
-            }
-        };
-        getRecommendations()
-    }, [selectedSport]);
+        if (selectedSport) {
+            getRecommendations(selectedSport);
+        }
+    }, [selectedSport, getRecommendations]);
 
     const refreshBets = () => {
         getRecommendations();
@@ -89,7 +92,7 @@ const BettingInterface = () => {
             gameTime: bet.gameTime,
             description: bet.description,
             amount: amount,
-            gameId: bet.gameId
+            gameId: bet.game.id
         };
 
         const result = await placeBet(betData);

@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion'
 import { TrendingUp, TrendingDown, Target, Clock } from 'lucide-react'
 
 const BettingCard = ({ bet, onSwipe, onCardClick }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
 
     const handleDragEnd = (event, info) => {
-        const swipeThreshold = 100;
+        const swipeThreshold = 50;
         if (info.offset.x > swipeThreshold) {
             onSwipe('right', bet);
         } else if (info.offset.x < -swipeThreshold) {
@@ -82,7 +81,7 @@ const BettingCard = ({ bet, onSwipe, onCardClick }) => {
                         </div>
                         <div className='text-center'>
                             <p className='text-sm text-blue-100'>Odds</p>
-                            <p className='text-2xl font-bold'>{bet.odds}</p>
+                            <p className='text-2xl font-bold'>{formatOdds(bet.odds)}</p>
                         </div>
                         <div className='text-center'>
                             <p className='text-sm text-blue-100'>Confidence</p>

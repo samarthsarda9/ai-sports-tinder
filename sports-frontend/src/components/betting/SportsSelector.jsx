@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import PropTypes from 'prop-types';
 
 const SportSelector = ({
     selectedSport,
@@ -29,10 +28,10 @@ const SportSelector = ({
                         disabled={loading}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className={`p-3 rounded-lg text-center transition-all duration-200 $(
-                            selectedSport === sportKey
+                        className={`p-3 rounded-lg text-center transition-all duration-200 ${
+                            selectedSport === sport.key
                             ? 'bg-blue-600 text-white shadow-lg'
-                            : 'bg-white/20 text-blue-200 hover:bg-white/30')
+                            : 'bg-white/20 text-blue-200 hover:bg-white/30'
                         } ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                     >
                         <div className='text-2xl mb-1'>
@@ -46,13 +45,6 @@ const SportSelector = ({
             </div>
         </div>
     );
-};
-
-SportSelector.propTypes = {
-    selectedSport: PropTypes.string.isRequired,
-    availableSports: PropTypes.objectOf(PropTypes.string).isRequired,
-    onSportChange: PropTypes.func.isRequired,
-    loading: PropTypes.bool.isRequired
 };
 
 export default SportSelector;

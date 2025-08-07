@@ -8,7 +8,7 @@ const AuthContext = createContext();
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
-        throw new Error('useAuth must be within an AuthProvider')
+        throw new Error('useAuth must be used within an AuthProvider')
     }
     return context;
 }
@@ -79,14 +79,14 @@ export const AuthProvider = ({ children }) => {
 
     const resendVerificationEmail = async (email) => {
         try {
-            const response = axios.post('/auth/resend', null, {
+            const response = await axios.post('/auth/resend', null, {
                 params: { email }
             });
             return { success: true, data: response.data };
         } catch (error) {
             return {
                 success: false,
-                error: error.response?.data.message || 'Failed to resent verification code'
+                error: error.response?.data.message || 'Failed to resend verification code'
             };
         }
     };

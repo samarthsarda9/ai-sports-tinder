@@ -70,7 +70,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                     >
                         {/**Header*/}
                         <div className='bg-gradient-to-r from-blue-600 to-purple-600 text-white-p-6 rounded-t-2xl'>
-                            <div className='flex justify-between items-start'>
+                            <div className='flex justify-center items-start'>
                                 <div>
                                     <h2 className='text-2xl font-bold'>{bet.player}</h2>
                                     <p className='text-blue-100 text-lg'>{bet.team} vs {bet.opponent}</p>
@@ -117,12 +117,12 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
 
                             {/**AI Analysis */}
                             <div className='border rounded-lg p-4'>
-                                <div className='flex items-center space-x-2 mb-4'>
+                                <div className='flex items-center justify-center space-x-2 mb-4'>
                                     <Brain className='w-5 h-4 text-purple-600' />
                                     <h3 className='font-semibold text-gray-800'>AI Analysis</h3>
                                 </div>
 
-                                <div className={`flex items-center space-x-2 mb-3 p-3 rounded-lg border ${getRecommendationColor(bet.aiAnalysis.recommendation)}`}>
+                                <div className={`flex items-center justify-center space-x-2 mb-3 p-3 rounded-lg border ${getRecommendationColor(bet.aiAnalysis.recommendation)}`}>
                                     {getRecommendationIcon(bet.aiAnalysis.recommendation)}
                                     <span className='font-semibold'>{bet.aiAnalysis.recommendation}</span>
                                 </div>
@@ -147,7 +147,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                                     <h4 className='font-medium text-gray-800 mb-2'>Key Factors</h4>
                                     <ul className='space-y-1'>
                                         {bet.aiAnalysis.keyFactors.map((factor, index) => (
-                                            <li key={index} className='flex items-center space-x-2 text-sm text-gray-600'>
+                                            <li key={index} className='flex items-center justify-center space-x-2 text-sm text-gray-600'>
                                                 <div className='w-1.5 h-1.5 bg-blue-500 rounded-full'></div>
                                                 <span>{factor}</span>
                                             </li>
@@ -158,7 +158,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
 
                             {/**Game Info */}
                             <div className='bg-gray-50 rounded-lg p-4'>
-                                <div className='flex items-center space-x-2 mb-2'>
+                                <div className='flex items-center justify-center space-x-2 mb-2'>
                                     <Clock className='w-5 h-5 text-gray-500' />
                                     <h3 className='font-semibold text-gray-800'>Game Information</h3>
                                 </div>
