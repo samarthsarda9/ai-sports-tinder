@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, RefreshCw, AlertCircle } from 'lucide-react';
+import { Trophy, RefreshCw, AlertCircle, DollarSign } from 'lucide-react';
 
 import BettingCard from './BettingCard';
 import SportSelector from './SportsSelector';
 import BetDetailsModal from './BetDetailsModal';
+import { fetchRecommendations } from '../../service/RecommendationService';
+import { placeBet } from '../../service/betService';
+import { useAuth } from '../../contexts/AuthContext';
 
-const BettingInterface = ({ user, setUser }) => {
+const BettingInterface = () => {
+
+    const { user, setUser } = useAuth();
+
     const [currentBetIndex, setCurrentBetIndex] = useState(0);
     const [selectedBet, setSelectedBet] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,7 +33,7 @@ const BettingInterface = ({ user, setUser }) => {
         { key: 'soccer_usa_mls', label: 'MLS' }
     ];
 
-    const getRecommendations = useCallback(async (sportKey) => {
+    const getRecommendations = async (sportKey) => {
         setLoading(true);
         setError('');
         try {
@@ -39,7 +45,7 @@ const BettingInterface = ({ user, setUser }) => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    };
 
     useEffect(() => {
         getRecommendations(selectedSport);
@@ -116,9 +122,13 @@ const BettingInterface = ({ user, setUser }) => {
                             <div className="bg-white/20 rounded-full px-3 py-1">
                                 <div className="flex items-center space-x-1">
                                     <DollarSign className="w-4 h-4 text-yellow-300" />
-                                    <span className="text-white font-semibold">
-                                        ${user.virtualBalance.toLocaleString()}
-                                    </span>
+                                    {user && user.profile ? (
+                                        <span className="text-white font-semibold">
+                                            ${user.walletBalance.toLocaleString()}
+                                        </span>
+                                    ) : (
+                                        <span className='text-white font-semibold'>$0.00</span>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -139,7 +149,7 @@ const BettingInterface = ({ user, setUser }) => {
                                 )}
                                 <button
                                     onClick={refreshBets}
-                                    disabled={loading || !isApiKeyValid}
+                                    disabled={loading}
                                     className="text-blue-300 hover:text-white transition-colors disabled:opacity-50"
                                 >
                                     <RefreshCw className="w-4 h-4" />
@@ -147,12 +157,12 @@ const BettingInterface = ({ user, setUser }) => {
                             </div>
                         </div>
 
-                        {!isApiKeyValid && (
+                        {/* {!isApiKeyValid && (
                             <div className="flex items-center space-x-2 text-yellow-300 text-sm mb-3">
                                 <AlertCircle className="w-4 h-4" />
                                 <span>API key not configured. Using demo mode.</span>
                             </div>
-                        )}
+                        )} */}
 
                         {error && (
                             <div className="flex items-center space-x-2 text-red-300 text-sm mb-3">
@@ -178,10 +188,10 @@ const BettingInterface = ({ user, setUser }) => {
                                 <h3 className="text-xl font-bold text-white mb-2">Loading Live Odds...</h3>
                                 <p className="text-blue-200">Fetching the latest betting opportunities</p>
                             </div>
-                        ) : availableBets.length > 0 && currentBetIndex < availableBets.length ? (
+                        ) : bets.length > 0 && currentBetIndex < bets.length ? (
                             <AnimatePresence mode="wait">
                                 <motion.div
-                                    key={availableBets[currentBetIndex].id}
+                                    key={bets[currentBetIndex].id}
                                     initial={{ scale: 0.8, opacity: 0 }}
                                     animate={{
                                         scale: 1,
@@ -194,7 +204,7 @@ const BettingInterface = ({ user, setUser }) => {
                                     className="w-full"
                                 >
                                     <BettingCard
-                                        bet={availableBets[currentBetIndex]}
+                                        bet={bets[currentBetIndex]}
                                         onSwipe={handleSwipe}
                                         onCardClick={handleCardClick}
                                     />
@@ -204,17 +214,17 @@ const BettingInterface = ({ user, setUser }) => {
                             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 text-center">
                                 <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
                                 <h3 className="text-xl font-bold text-white mb-2">
-                                    {availableBets.length === 0 ? 'No Live Bets Available' : 'No More Bets!'}
+                                    {bets.length === 0 ? 'No Live Bets Available' : 'No More Bets!'}
                                 </h3>
                                 <p className="text-blue-200 mb-4">
-                                    {availableBets.length === 0
+                                    {bets.length === 0
                                         ? 'Try selecting a different sport or check back later for new opportunities!'
                                         : "You've seen all available bets. Check back later for new opportunities!"
                                     }
                                 </p>
-                                {availableBets.length > 0 && (
+                                {bets.length > 0 && (
                                     <button
-                                        onClick={resetCards}
+                                        onClick={refreshBets}
                                         className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all"
                                     >
                                         Reset Cards
@@ -225,17 +235,17 @@ const BettingInterface = ({ user, setUser }) => {
                     </div>
 
                     {/* Quick Actions */}
-                    {availableBets.length > 0 && currentBetIndex < availableBets.length && (
+                    {bets.length > 0 && currentBetIndex < bets.length && (
                         <div className="flex justify-center space-x-4">
                             <button
-                                onClick={() => handleSwipe('left', availableBets[currentBetIndex])}
+                                onClick={() => handleSwipe('left', bets[currentBetIndex])}
                                 disabled={loading}
                                 className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 ✕
                             </button>
                             <button
-                                onClick={() => handleSwipe('right', availableBets[currentBetIndex])}
+                                onClick={() => handleSwipe('right', bets[currentBetIndex])}
                                 disabled={loading}
                                 className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >

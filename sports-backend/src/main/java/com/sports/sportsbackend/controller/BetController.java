@@ -79,7 +79,6 @@ public class BetController {
     }
 
     private Long getCurrentUserId() {
-        System.out.println("HERE: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()
                 || !(authentication.getPrincipal() instanceof User)) {

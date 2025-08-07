@@ -106,7 +106,6 @@ public class RecommendationService {
             bet.setOverUnder(request.getOverUnder());
             bet.setGameTime(request.getGameTime());
             bet.setDescription(analysis.getReasoning());
-            bet.setConfidence(analysis.getConfidence());
 
             bet.setAiResponse(analysis);
 
@@ -141,7 +140,7 @@ public class RecommendationService {
                             h2hBet.setTeam(outcome.getName());
                             h2hBet.setOpponent(outcome.getName().equals(game.getHomeTeam()) ?
                                     game.getAwayTeam() : game.getHomeTeam());
-                            h2hBet.setSport(mapSportKeyToEnum(game.getSportKey())); // Use correct field and mapper
+                            h2hBet.setSport(mapSportKeyToEnum(game.getSportKey())); 
                             h2hBet.setType(Bet.BetType.H2H);
                             h2hBet.setLine(BigDecimal.ZERO);
                             h2hBet.setOdds(BigDecimal.valueOf(outcome.getPrice()));
@@ -165,12 +164,12 @@ public class RecommendationService {
                             spreadBet.setTeam(outcome.getName());
                             spreadBet.setOpponent(outcome.getName().equals(game.getHomeTeam()) ?
                                     game.getAwayTeam() : game.getHomeTeam());
-                            spreadBet.setSport(mapSportKeyToEnum(game.getSportKey())); // Use correct field and mapper
+                            spreadBet.setSport(mapSportKeyToEnum(game.getSportKey())); 
                             spreadBet.setType(Bet.BetType.SPREAD);
                             spreadBet.setLine(BigDecimal.valueOf(outcome.getPoint()));
                             spreadBet.setOdds(BigDecimal.valueOf(outcome.getPrice()));
                             spreadBet.setOverUnder(outcome.getPoint() >= 0 ? Bet.OverUnder.OVER : Bet.OverUnder.UNDER);
-                            spreadBet.setGameTime(game.getCommenceTime()); // Use correct getter
+                            spreadBet.setGameTime(game.getCommenceTime()); 
                             spreadBet.setDescription(String.format("%s %+f", outcome.getName(), outcome.getPoint()));
                             requests.add(spreadBet);
                         }
@@ -189,12 +188,12 @@ public class RecommendationService {
                             totalBet.setPlayer("Total Score");
                             totalBet.setTeam(game.getHomeTeam());
                             totalBet.setOpponent(game.getAwayTeam());
-                            totalBet.setSport(mapSportKeyToEnum(game.getSportKey())); // Use correct field and mapper
+                            totalBet.setSport(mapSportKeyToEnum(game.getSportKey())); 
                             totalBet.setType(Bet.BetType.TOTAL_POINTS);
                             totalBet.setLine(BigDecimal.valueOf(outcome.getPoint()));
                             totalBet.setOdds(BigDecimal.valueOf(outcome.getPrice()));
                             totalBet.setOverUnder("Over".equalsIgnoreCase(outcome.getName()) ? Bet.OverUnder.OVER : Bet.OverUnder.UNDER);
-                            totalBet.setGameTime(game.getCommenceTime()); // Use correct getter
+                            totalBet.setGameTime(game.getCommenceTime()); 
                             totalBet.setDescription(String.format("Total Points %s %f", outcome.getName(), outcome.getPoint()));
                             requests.add(totalBet);
                         }

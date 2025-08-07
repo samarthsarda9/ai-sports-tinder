@@ -68,7 +68,7 @@ const Verify = () => {
         } else {
             setError(result.error);
         }
-        setResentLoading(false);
+        setResendLoading(false);
     }
 
     return (

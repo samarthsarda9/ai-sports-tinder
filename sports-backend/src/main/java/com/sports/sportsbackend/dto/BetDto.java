@@ -26,7 +26,6 @@ public class BetDto {
     private BigDecimal amount;
     private LocalDateTime gameTime;
     private Bet.Status status;
-    private int confidence;
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

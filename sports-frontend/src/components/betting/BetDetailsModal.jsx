@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { x, TrendingUp, TrendingDown, Clock, DollarSign, Brain, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { X, TrendingUp, TrendingDown, Clock, DollarSign, Brain, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 
 const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
     const [betAmount, setBetAmount] = useState(50);
