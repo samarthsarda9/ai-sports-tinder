@@ -38,7 +38,6 @@ const BettingInterface = () => {
         try {
             const data = await fetchRecommendations(sportKey);
             setBets(data);
-            setSelectedSport(sportKey)
         } catch (error) {
             setError('Failed to load betting recommendations.');
         } finally {
@@ -138,6 +137,12 @@ const BettingInterface = () => {
                                     </span>
                                 </div>
                             </div>
+                            <button
+                                onClick={handleLogout}
+                                className="top-6 right-6 absolute text-gray-300 hover:text-white transition-colors"
+                            >
+                                <LogOut size={30} />
+                            </button>
                         </div>
                     </div>
                 </div>

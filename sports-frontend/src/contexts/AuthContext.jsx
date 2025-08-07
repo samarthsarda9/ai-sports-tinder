@@ -22,13 +22,21 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (token && token.trim() != '') {
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            setIsAuthenticated(true);
-        } else {
-            delete axios.defaults.headers.common['Authorization'];
-        }
-        setLoading(false);
+        const fetchUser = async () => {
+            if (token && token.trim() != '') {
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                try {
+                    const userResponse = await axios.get('/users/me');
+                    setUser(userResponse.data);
+                    setIsAuthenticated(true);
+                } catch (error) {
+                    logout();
+                }
+            }
+            setLoading(false);
+        };
+
+        fetchUser();
     }, []);
 
     const login = async (email, password) => {
@@ -41,7 +49,6 @@ export const AuthProvider = ({ children }) => {
 
             const userResponse = await axios.get('/users/me');
             setUser(userResponse.data);
-
             setIsAuthenticated(true);
             return { success : true };
         } catch (error) {
