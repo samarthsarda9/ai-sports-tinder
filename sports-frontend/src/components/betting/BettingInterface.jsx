@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, RefreshCw, AlertCircle, DollarSign } from 'lucide-react';
 
@@ -10,7 +10,6 @@ import { placeBet } from '../../service/betService';
 import { useAuth } from '../../contexts/AuthContext';
 
 const BettingInterface = () => {
-
     const { user, setUser } = useAuth();
 
     const [currentBetIndex, setCurrentBetIndex] = useState(0);
@@ -19,9 +18,9 @@ const BettingInterface = () => {
     const [swipeDirection, setSwipeDirection] = useState(null);
 
     const [bets, setBets] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [selectedSport, setSelectedSport] = useState('americanfootball_nfl');
+    const [selectedSport, setSelectedSport] = useState('baseball_mlb');
 
     const AVAILABLE_SPORTS = [
         { key: 'americanfootball_nfl', label: 'NFL' },
@@ -33,26 +32,29 @@ const BettingInterface = () => {
         { key: 'soccer_usa_mls', label: 'MLS' }
     ];
 
-    const getRecommendations = async (sportKey) => {
-        setLoading(true);
-        setError('');
-        try {
-            const data = await fetchRecommendations(selectedSport);
-            setBets(data);
-            setSelectedSport(sportKey)
-        } catch (error) {
-            setError('Failed to load betting recommendations.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
-        getRecommendations(selectedSport);
-    }, [getRecommendations]);
+        const getRecommendations = async (sportKey) => {
+            setLoading(true);
+            setError('');
+            try {
+                const data = await fetchRecommendations(selectedSport);
+                setBets(data);
+                setSelectedSport(sportKey)
+            } catch (error) {
+                setError('Failed to load betting recommendations.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        getRecommendations()
+    }, [selectedSport]);
 
     const refreshBets = () => {
-        getRecommendations(selectedSport);
+        getRecommendations();
+    }
+
+    const handleSportChange = (sportKey) => {
+        setSelectedSport(sportKey);
     }
 
     const handleSwipe = (direction, bet) => {
@@ -86,17 +88,19 @@ const BettingInterface = () => {
             overUnder: bet.overUnder,
             gameTime: bet.gameTime,
             description: bet.description,
-            confidence: bet.aiAnalysis.confidence,
             amount: amount,
             gameId: bet.gameId
         };
 
         const result = await placeBet(betData);
 
-        if (result.sucess) {
+        if (result.success) {
             setUser(prev => ({
                 ...prev,
-                virtualBalance: prev.virtualBalance - amount
+                profile: {
+                    ...prev.profile,
+                    walletBalance: prev.profile.walletBalance - amount
+                }
             }))
         } else {
             console.error (result.error);
@@ -122,13 +126,9 @@ const BettingInterface = () => {
                             <div className="bg-white/20 rounded-full px-3 py-1">
                                 <div className="flex items-center space-x-1">
                                     <DollarSign className="w-4 h-4 text-yellow-300" />
-                                    {user && user.profile ? (
-                                        <span className="text-white font-semibold">
-                                            ${user.walletBalance.toLocaleString()}
-                                        </span>
-                                    ) : (
-                                        <span className='text-white font-semibold'>$0.00</span>
-                                    )}
+                                    <span className="font-semibold">
+                                        ${user?.profile?.walletBalance.toLocaleString() || '0.00'}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -176,7 +176,7 @@ const BettingInterface = () => {
                     <SportSelector
                         selectedSport={selectedSport}
                         availableSports={AVAILABLE_SPORTS}
-                        onSportChange={setSelectedSport}
+                        onSportChange={handleSportChange}
                         loading={loading}
                     />
 
@@ -262,7 +262,7 @@ const BettingInterface = () => {
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
                 onPlaceBet={handlePlaceBet}
-                userBalance={user.virtualBalance}
+                userBalance={user?.profile?.walletBalance || 0}
             />
         </div>
     );
