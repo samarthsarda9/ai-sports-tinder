@@ -36,7 +36,7 @@ public class RecommendationService {
     }
 
     public List<BetDto> getRecommendations(String sport) {
-        OddsApiDto[] oddsData = oddsApiService.getOdds(sport, "us", "spreads,totals,h2h");
+        OddsApiDto[] oddsData = oddsApiService.getOdds(sport, "us", "totals");
         List<BetRequestDto> allPotentialBets = new ArrayList<>();
         for (OddsApiDto game : oddsData) {
             allPotentialBets.addAll(createBetRequestFromData(game));
@@ -211,7 +211,7 @@ public class RecommendationService {
             case "baseball_mlb" -> Bet.Sport.MLB;
             case "icehockey_nhl" -> Bet.Sport.NHL;
             case "soccer_epl" -> Bet.Sport.EPL;
-            case "soccer_use_mls" -> Bet.Sport.MLS;
+            case "soccer_usa_mls" -> Bet.Sport.MLS;
             default -> Bet.Sport.OTHER;
         };
     }
@@ -236,7 +236,9 @@ public class RecommendationService {
                         "Analyze each bet as its own bet without reference to previous bets." +
                         "Input Bets:%n%s%n%n" +
                         "Response Format:%n" +
-                        "Respond ONLY with a raw JSON object. Do not include any introductory text, explanations, or markdown formatting like ```json. The JSON object must conform to the following structure:%n" +
+                        "Respond ONLY with a raw JSON object. Do not include any introductory text, explanations, or markdown formatting like ```json. " +
+                        "IMPORTANT: Ensure that any double quotes within the 'reasoning' string are properly escaped with a backslash (e.g., \\\"This is a quote\\\"). " +
+                        "The JSON object must conform to the following structure:%n" +
                         "{\"recommendation\": \"<'Strong Bet', 'Good Bet', 'Risky Bet', or 'Avoid'>\", \"reasoning\": \"<A concise, data-driven paragraph explaining your recommendation.>\", " +
                         "\"confidence\": <A number between 0 and 100 representing your confidence in this bet.>, \"keyFactors\": [\"<A key factor supporting your analysis>\", " +
                         "\"<Another key factor>\"], \"riskLevel\": \"<'Low', 'Medium', or 'High'>\"}",

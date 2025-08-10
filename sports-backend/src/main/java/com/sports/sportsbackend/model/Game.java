@@ -15,6 +15,9 @@ public class Game {
     private String id;
 
     @Column(nullable = false)
+    private String sportKey;
+
+    @Column(nullable = false)
     private String homeTeam;
 
     @Column(nullable = false)

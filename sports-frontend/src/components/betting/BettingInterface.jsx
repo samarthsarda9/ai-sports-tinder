@@ -59,6 +59,13 @@ const BettingInterface = () => {
         setSelectedSport(sportKey);
     }
 
+    const advanceToNextCard = () => {
+        setTimeout(() => {
+            setCurrentBetIndex(prev => Math.min(prev + 1, bets.length));
+            setSwipeDirection(null);
+        }, 50);
+    }
+
     const handleSwipe = (direction, bet) => {
         setSwipeDirection(direction);
 
@@ -84,7 +91,7 @@ const BettingInterface = () => {
             team: bet.team,
             opponent: bet.opponent,
             sport: bet.sport,
-            type: bet.betType,
+            type: bet.type,
             line: bet.line,
             odds: bet.odds,
             overUnder: bet.overUnder,
@@ -103,7 +110,11 @@ const BettingInterface = () => {
                     ...prev.profile,
                     walletBalance: prev.profile.walletBalance - amount
                 }
-            }))
+            }));
+
+            setIsModalOpen(false);
+            setSelectedBet(null);
+            advanceToNextCard();
         } else {
             console.error (result.error);
         }

@@ -5,7 +5,7 @@ import { TrendingUp, TrendingDown, Target, Clock } from 'lucide-react'
 const BettingCard = ({ bet, onSwipe, onCardClick }) => {
 
     const handleDragEnd = (event, info) => {
-        const swipeThreshold = 20;
+        const swipeThreshold = 100;
         if (info.offset.x > swipeThreshold) {
             onSwipe('right', bet);
         } else if (info.offset.x < -swipeThreshold) {
@@ -95,12 +95,12 @@ const BettingCard = ({ bet, onSwipe, onCardClick }) => {
                     <div className='flex items-center justify-between mb-4'>
                         <div className='flex items-center space-x-2'>
                             <Target className='w-5 h-5 text-gray-500' />
-                            <span className='font-semibold text-gray-800'>{bet.betType}</span>
+                            <span className='font-semibold text-gray-800'>{bet.type}</span>
                         </div>
                         <div className={`flex items-center space-x-1 px-3 py-1 rounded-full ${
-                            bet.overUnder === 'Over' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                            bet.overUnder === 'OVER' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                         }`}>
-                            {bet.overUnder === 'Over' ? (
+                            {bet.overUnder === 'OVER' ? (
                                 <TrendingUp className='w-4 h-4' />
                             ) : (
                                 <TrendingDown className='w-4 h-4' />

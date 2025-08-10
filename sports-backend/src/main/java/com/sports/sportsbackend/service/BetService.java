@@ -8,6 +8,7 @@ import com.sports.sportsbackend.model.Bet;
 import com.sports.sportsbackend.model.Game;
 import com.sports.sportsbackend.model.Profile;
 import com.sports.sportsbackend.repository.BetRepository;
+import com.sports.sportsbackend.repository.GameRepository;
 import com.sports.sportsbackend.repository.ProfileRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -22,13 +23,13 @@ public class BetService {
 
     private final BetRepository betRepository;
     private final ProfileRepository profileRepository;
-    private final GameService gameService;
+    private final GameRepository gameRepository;
 
     public BetService(BetRepository betRepository, ProfileRepository profileRepository,
-                      GameService gameService, UserService userService) {
+                      GameRepository gameRepository) {
         this.betRepository = betRepository;
         this.profileRepository = profileRepository;
-        this.gameService = gameService;
+        this.gameRepository = gameRepository;
     }
 
 
@@ -64,13 +65,22 @@ public class BetService {
 
     @Transactional
     public BetDto placeBet(BetRequestDto request, Long userId) {
-        Profile profile = profileRepository.findById(userId)
+        Profile profile = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
         if (profile.getWalletBalance().compareTo(request.getAmount()) < 0) {
             throw new RuntimeException("Insufficient balance");
         }
-        Game game = gameService.getGameEntityById(request.getGameId())
-                .orElseThrow(() -> new RuntimeException("Game not found"));
+        Game game = gameRepository.findById(request.getGameId()).orElseGet(() -> {
+            Game newGame = new Game();
+            newGame.setId(request.getGameId());
+            newGame.setSportKey(request.getSport().name());
+            newGame.setHomeTeam(request.getTeam());
+            newGame.setAwayTeam(request.getTeam());
+            newGame.setStartTime(request.getGameTime());
+            newGame.setStatus(Game.GameStatus.UPCOMING);
+            return gameRepository.save(newGame);
+        });
+
         if (game.getStatus() != Game.GameStatus.UPCOMING) {
             throw new RuntimeException("Game is not upcoming");
         }

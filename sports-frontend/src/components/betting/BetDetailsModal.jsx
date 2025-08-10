@@ -73,7 +73,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                             <div className='text-center'>
                                 <h2 className='text-white text-2xl font-bold mb-1 '>{bet.player}</h2>
                                 <p className='text-blue-100 text-lg mb-1'>{bet.team} vs {bet.opponent}</p>
-                                <p className='text-blue-100'>{bet.sport} • {bet.betType}</p>
+                                <p className='text-blue-100'>{bet.sport} • {bet.type}</p>
                             </div>
                             <button
                                 onClick={onClose}
@@ -100,9 +100,9 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                                 </div>
                                 <div className='text-center p-4 bg-gray-50 rounded-lg'>
                                     <p className='text-sm text-gray-600'>Direction</p>
-                                    <div className={`flex items-center justify-center space-x-1 px-2 py-1 rounded-full mx-auto w-fit ${bet.overUnder === 'Over' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                    <div className={`flex items-center justify-center space-x-1 px-2 py-1 rounded-full mx-auto w-fit ${bet.overUnder === 'OVER' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                                         }`}>
-                                        {bet.overUnder === 'Over' ? (
+                                        {bet.overUnder === 'OVER' ? (
                                             <TrendingUp className='w-4 h-4' />
                                         ) : (
                                             <TrendingDown className='w-4 h-4' />

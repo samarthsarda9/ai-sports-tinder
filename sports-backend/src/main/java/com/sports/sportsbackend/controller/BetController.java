@@ -2,17 +2,13 @@ package com.sports.sportsbackend.controller;
 
 import com.sports.sportsbackend.dto.BetDto;
 import com.sports.sportsbackend.dto.BetRequestDto;
-import com.sports.sportsbackend.model.Bet;
 import com.sports.sportsbackend.model.User;
-import com.sports.sportsbackend.security.service.JwtService;
 import com.sports.sportsbackend.service.BetService;
-import com.sports.sportsbackend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,13 +20,9 @@ import java.util.Optional;
 public class BetController {
 
     private final BetService betService;
-    private final JwtService jwtService;
-    private final UserService userService;
 
-    public BetController(BetService betService, JwtService jwtService, UserService userService) {
+    public BetController(BetService betService) {
         this.betService = betService;
-        this.jwtService = jwtService;
-        this.userService = userService;
     }
 
     @GetMapping
