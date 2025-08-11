@@ -3,7 +3,7 @@ import Login from './components/auth/Login.jsx'
 import Register from './components/auth/Register.jsx'
 import Verify from './components/auth/Verify.jsx'
 import BettingInterface from './components/betting/BettingInterface.jsx'
-import SportSelector from './components/betting/SportsSelector.jsx'
+import ProfilePage from './components/profile/ProfilePage.jsx'
 import { useAuth } from './contexts/AuthContext.jsx'
 import { Route, Routes, Navigate } from 'react-router-dom'
 
@@ -26,6 +26,13 @@ function App() {
             path="/" element={
               <PrivateRoute>
                 <BettingInterface />
+              </PrivateRoute>
+            }
+          />
+          <Route 
+            path="/profile" element={
+              <PrivateRoute>
+                <ProfilePage />
               </PrivateRoute>
             }
           />

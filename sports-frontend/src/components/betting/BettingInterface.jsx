@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, RefreshCw, AlertCircle, DollarSign, LogOut } from 'lucide-react';
+import { Trophy, RefreshCw, AlertCircle, DollarSign, LogOut, User } from 'lucide-react';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 import BettingCard from './BettingCard';
 import SportSelector from './SportsSelector';
@@ -11,6 +12,7 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const BettingInterface = () => {
     const { user, setUser, logout } = useAuth();
+    const navigate = useNavigate();
 
     const [currentBetIndex, setCurrentBetIndex] = useState(0);
     const [selectedBet, setSelectedBet] = useState(null);
@@ -127,6 +129,10 @@ const BettingInterface = () => {
 
     const handleLogout = () => {
         logout();
+    };
+
+    const goToProfile = () => {
+        navigate('/profile');
     }
 
     return (
@@ -149,10 +155,18 @@ const BettingInterface = () => {
                                 </div>
                             </div>
                             <button
+                                onClick={goToProfile}
+                                className="top-4 right-20 absolute text-gray-300 hover:text-white transition-colors"
+                            >
+                                <User size={30} />
+                                <span>Profile</span>
+                            </button>
+                            <button
                                 onClick={handleLogout}
-                                className="top-6 right-6 absolute text-gray-300 hover:text-white transition-colors"
+                                className="top-4 right-5 absolute text-gray-300 hover:text-white transition-colors"
                             >
                                 <LogOut size={30} />
+                                <span>Logout</span>
                             </button>
                         </div>
                     </div>
