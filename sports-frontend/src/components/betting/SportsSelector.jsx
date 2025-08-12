@@ -18,7 +18,7 @@ const SportSelector = ({
     };
 
     return (
-        <div className='bg-white/10 backdrop-blur-lg rounded-lg p-4 mb-6'>
+        <div className='card p-4 mb-6'>
             <h3 className='text-white font-semibold mb-3'>Select Sport</h3>
             <div className='grid grid-cols-3 gap-2'>
                 {availableSports.map((sport) => (
@@ -30,7 +30,7 @@ const SportSelector = ({
                         whileTap={{ scale: 0.95 }}
                         className={`p-3 rounded-lg text-center transition-all duration-200 ${
                             selectedSport === sport.key
-                            ? 'bg-blue-600 text-white shadow-lg'
+                            ? 'bg-brand-600 text-white shadow-lg'
                             : 'bg-white/20 text-blue-200 hover:bg-white/30'
                         } ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                     >

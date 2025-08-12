@@ -126,4 +126,6 @@ export const fetchRecommendations = async (sportKey) => {
         console.error('Failed to fetch recommendations:', error);
         throw error;
     }
+    // await new Promise(resolve => setTimeout(resolve, 1000));
+    // return mockRecommendations[sportKey] || mockRecommendations.baseball_mlb;
 };

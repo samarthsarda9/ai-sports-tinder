@@ -6,6 +6,7 @@ import BettingInterface from './components/betting/BettingInterface.jsx'
 import ProfilePage from './components/profile/ProfilePage.jsx'
 import { useAuth } from './contexts/AuthContext.jsx'
 import { Route, Routes, Navigate } from 'react-router-dom'
+import Navbar from './components/layout/Navbar.jsx'
 
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -16,8 +17,9 @@ const PrivateRoute = ({ children }) => {
 
 function App() {
   return (
-    <div className='App'>
-      <main>
+    <div className='App min-h-screen bg-gradient-to-br from-brand-900 via-purple-900 to-brand-800'>
+      <Navbar />
+      <main className='pt-0'>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

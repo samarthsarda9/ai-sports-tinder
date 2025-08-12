@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, RefreshCw, AlertCircle, DollarSign, LogOut, User } from 'lucide-react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Trophy, RefreshCw, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import BettingCard from './BettingCard';
 import SportSelector from './SportsSelector';
@@ -23,15 +23,31 @@ const BettingInterface = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [selectedSport, setSelectedSport] = useState('baseball_mlb');
+    const [placedBetKeys, setPlacedBetKeys] = useState(() => {
+        try {
+            const raw = localStorage.getItem('placedBetKeys');
+            return raw ? new Set(JSON.parse(raw)) : new Set();
+        } catch {
+            return new Set();
+        }
+    });
+
+    const persistPlacedBetKeys = (nextSet) => {
+        setPlacedBetKeys(new Set(nextSet));
+        try {
+            localStorage.setItem('placedBetKeys', JSON.stringify(Array.from(nextSet)));
+        } catch {}
+    };
+
+    const computeBetKey = (bet) => {
+        const parts = [bet?.game?.id, bet?.type, bet?.overUnder, String(bet?.line)];
+        return parts.filter(Boolean).join('|');
+    };
 
     const AVAILABLE_SPORTS = [
         { key: 'americanfootball_nfl', label: 'NFL' },
         { key: 'basketball_nba', label: 'NBA' },
-        { key: 'baseball_mlb', label: 'MLB' },
-        { key: 'icehockey_nhl', label: 'NHL' },
-        { key: 'basketball_ncaab', label: 'NCAAB' },
-        { key: 'soccer_epl', label: 'EPL' },
-        { key: 'soccer_usa_mls', label: 'MLS' }
+        { key: 'baseball_mlb', label: 'MLB' }
     ];
 
     const getRecommendations = useCallback(async (sportKey) => {
@@ -39,13 +55,15 @@ const BettingInterface = () => {
         setError('');
         try {
             const data = await fetchRecommendations(sportKey);
-            setBets(data);
+            const filtered = data.filter((bet) => !placedBetKeys.has(computeBetKey(bet)));
+            setBets(filtered);
+            setCurrentBetIndex(0);
         } catch (error) {
             setError('Failed to load betting recommendations.');
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [placedBetKeys]);
 
     useEffect(() => {
         if (selectedSport) {
@@ -54,7 +72,7 @@ const BettingInterface = () => {
     }, [selectedSport, getRecommendations]);
 
     const refreshBets = () => {
-        getRecommendations();
+        getRecommendations(selectedSport);
     }
 
     const handleSportChange = (sportKey) => {
@@ -103,6 +121,13 @@ const BettingInterface = () => {
             gameId: bet.game.id
         };
 
+        const betKey = computeBetKey(bet);
+        if (placedBetKeys.has(betKey)) {
+            setIsModalOpen(false);
+            setSelectedBet(null);
+            return;
+        }
+
         const result = await placeBet(betData);
 
         if (result.success) {
@@ -114,6 +139,11 @@ const BettingInterface = () => {
                 }
             }));
 
+            const next = new Set(placedBetKeys);
+            next.add(betKey);
+            persistPlacedBetKeys(next);
+
+            setBets((prev) => prev.filter((b, idx) => !(idx === currentBetIndex)));
             setIsModalOpen(false);
             setSelectedBet(null);
             advanceToNextCard();
@@ -136,45 +166,9 @@ const BettingInterface = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
-            {/* Header */}
-            <div className="bg-white/10 backdrop-blur-lg border-b border-white/20">
-                <div className="max-w-md mx-auto px-4 py-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-2xl font-bold text-white">BetSwipe</h1>
-                            <p className="text-blue-200 text-sm">Live Sports Betting</p>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                            <div className="bg-white/20 rounded-full px-3 py-1">
-                                <div className="flex items-center space-x-1">
-                                    <DollarSign className="w-4 h-4 text-yellow-300" />
-                                    <span className="font-semibold">
-                                        ${user?.profile?.walletBalance.toLocaleString() || '0.00'}
-                                    </span>
-                                </div>
-                            </div>
-                            <button
-                                onClick={goToProfile}
-                                className="top-4 right-20 absolute text-gray-300 hover:text-white transition-colors"
-                            >
-                                <User size={30} />
-                                <span>Profile</span>
-                            </button>
-                            <button
-                                onClick={handleLogout}
-                                className="top-4 right-5 absolute text-gray-300 hover:text-white transition-colors"
-                            >
-                                <LogOut size={30} />
-                                <span>Logout</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+        <div className='min-h-screen'>
             {/* Main Content */}
-            <div className="max-w-md mx-auto px-4 py-6">
+            <div className="container-app py-6">
                 <div className="space-y-6">
                     {error && (
                         <div className="flex items-center space-x-2 text-red-300 text-sm mb-3">
@@ -193,7 +187,7 @@ const BettingInterface = () => {
                     {/* Betting Cards */}
                     <div className="relative">
                         {loading ? (
-                            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 text-center">
+                            <div className="card p-8 text-center">
                                 <RefreshCw className="w-16 h-16 text-blue-300 animate-spin mx-auto mb-4" />
                                 <h3 className="text-xl font-bold text-white mb-2">Loading Live Odds...</h3>
                                 <p className="text-blue-200">Fetching the latest betting opportunities</p>
@@ -221,7 +215,7 @@ const BettingInterface = () => {
                                 </motion.div>
                             </AnimatePresence>
                         ) : (
-                            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 text-center">
+                            <div className="card p-8 text-center">
                                 <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
                                 <h3 className="text-xl font-bold text-white mb-2">
                                     {bets.length === 0 ? 'No Live Bets Available' : 'No More Bets!'}
@@ -235,7 +229,7 @@ const BettingInterface = () => {
                                 {bets.length > 0 && (
                                     <button
                                         onClick={refreshBets}
-                                        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all"
+                                        className="btn btn-primary px-6 py-2"
                                     >
                                         Reset Cards
                                     </button>
@@ -250,14 +244,14 @@ const BettingInterface = () => {
                             <button
                                 onClick={() => handleSwipe('left', bets[currentBetIndex])}
                                 disabled={loading}
-                                className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="btn btn-danger btn-circle"
                             >
                                 ✕
                             </button>
                             <button
                                 onClick={() => handleSwipe('right', bets[currentBetIndex])}
                                 disabled={loading}
-                                className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="btn btn-success btn-circle"
                             >
                                 ✓
                             </button>

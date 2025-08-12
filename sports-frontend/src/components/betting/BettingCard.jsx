@@ -13,25 +13,6 @@ const BettingCard = ({ bet, onSwipe, onCardClick }) => {
         }
     };
 
-    const getRecommendationColor = (recommendation) => {
-        switch(recommendation) {
-            case 'Strong Bet': return 'text-green-600 bg-green-100';
-            case 'Good Bet': return 'text-blue-600 bg-blue-100';
-            case 'Risky Bet': return 'text-yellow-600 bg-yellow-100';
-            case 'Avoid': return 'text-red-600 bg-red-100';
-            default: return 'text-gray-600 bg-gray-100';
-        }
-    };
-
-    const getRiskColor = (risk) => {
-        switch (risk) {
-            case 'Low': return 'text-green-600';
-            case 'Medium': return 'text-yellow-600';
-            case 'High': return 'text-red-600';
-            default: return 'text-gray-600';
-        }
-    };
-
     const formatOdds = (odds) => {
         if (odds > 0) return `+${odds}`;
         return odds.toString();

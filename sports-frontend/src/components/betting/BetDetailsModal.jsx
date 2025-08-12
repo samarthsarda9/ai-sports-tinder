@@ -58,7 +58,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p4 z-50'
+                    className='fixed inset-0 bg-black/60 flex items-center justify-center p4 z-50'
                     onClick={onClose}
                 >
                     <motion.div
@@ -69,7 +69,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/**Header*/}
-                        <div className='bg-gradient-to-r from-blue-600 to-purple-600 text-white-p-6 rounded-t-xl relative'>
+                        <div className='bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-xl relative'>
                             <div className='text-center'>
                                 <h2 className='text-white text-2xl font-bold mb-1 '>{bet.player}</h2>
                                 <p className='text-blue-100 text-lg mb-1'>{bet.team} vs {bet.opponent}</p>
@@ -119,7 +119,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                                     <h3 className='font-semibold text-gray-800'>AI Analysis</h3>
                                 </div>
 
-                                <div className={`flex items-center justify-center space-x-2 mb-3 p-3 rounded-lg border ${getRecommendationColor(bet.aiAnalysis.recommendation)}`}>
+                                <div className={`flex items-center justify-center space-x-2 mb-3 p-3 rounded-lg ${getRecommendationColor(bet.aiAnalysis.recommendation)}`}>
                                     {getRecommendationIcon(bet.aiAnalysis.recommendation)}
                                     <span className='font-semibold'>{bet.aiAnalysis.recommendation}</span>
                                 </div>
@@ -130,12 +130,12 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                                 </div>
 
                                 <div className='grid grid-cols-2 gap-4 mb-4'>
-                                    <div className={`p-3 rounded-lg ${getRiskColor(bet.aiAnalysis.riskLevel)}`}>
+                                    <div className={`p-3 rounded-lg bg-yellow-50`}>
                                         <p className='text-sm font-medium'>Risk Level</p>
-                                        <p className='font-semibold'>{bet.aiAnalysis.riskLevel}</p>
+                                        <p className={`font-semibold ${getRiskColor(bet.aiAnalysis.riskLevel)}`}>{bet.aiAnalysis.riskLevel}</p>
                                     </div>
                                     <div className='p-3 rounded-lg bg-blue-50'>
-                                        <p className='text-sm font-medium'>Risk Level</p>
+                                        <p className='text-sm font-medium'>Confidence</p>
                                         <p className='font-semibold text-blue-700'>{bet.aiAnalysis.confidence}%</p>
                                     </div>
                                 </div>
@@ -214,8 +214,7 @@ const BetDetailsModal = ({ bet, isOpen, onClose, onPlaceBet, userBalance }) => {
                                 <button
                                     onClick={handlePlaceBet}
                                     disabled={betAmount < 10 || betAmount > userBalance}
-                                    className='w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold
-                                     hover:from-blue-700 hover:to-purple-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+                                    className='btn btn-primary w-full py-3'
                                 >
                                     Place Bet for ${betAmount}
                                 </button>
