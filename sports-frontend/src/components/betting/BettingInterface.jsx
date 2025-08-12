@@ -36,7 +36,23 @@ const BettingInterface = () => {
         setPlacedBetKeys(new Set(nextSet));
         try {
             localStorage.setItem('placedBetKeys', JSON.stringify(Array.from(nextSet)));
-        } catch {}
+        } catch { }
+    };
+
+    const [dismissedBetKeys, setDismissedBetKeys] = useState(() => {
+        try {
+            const raw = localStorage.getItem('dismissedBetKeys');
+            return raw ? new Set(JSON.parse(raw)) : new Set();
+        } catch {
+            return new Set();
+        }
+    });
+
+    const persistDismissedBetKeys = (nextSet) => {
+        setDismissedBetKeys(new Set(nextSet));
+        try {
+            localStorage.setItem('dismissedBetKeys', JSON.stringify(Array.from(nextSet)));
+        } catch { }
     };
 
     const computeBetKey = (bet) => {
@@ -50,20 +66,32 @@ const BettingInterface = () => {
         { key: 'baseball_mlb', label: 'MLB' }
     ];
 
-    const getRecommendations = useCallback(async (sportKey) => {
-        setLoading(true);
-        setError('');
-        try {
-            const data = await fetchRecommendations(sportKey);
-            const filtered = data.filter((bet) => !placedBetKeys.has(computeBetKey(bet)));
-            setBets(filtered);
-            setCurrentBetIndex(0);
-        } catch (error) {
-            setError('Failed to load betting recommendations.');
-        } finally {
-            setLoading(false);
-        }
-    }, [placedBetKeys]);
+    const getRecommendations = useCallback(
+        async (sportKey) => {
+            setLoading(true);
+            setError('');
+            try {
+                const data = await fetchRecommendations(sportKey, {
+                    preferCache: true,
+                    backgroundRefresh: false, // set to true for SWR pattern
+                    ttlMs: 5 * 60 * 1000
+                });
+
+                const filtered = data.filter((bet) => {
+                    const key = computeBetKey(bet);
+                    return !(placedBetKeys.has(key) || dismissedBetKeys.has(key));
+                });
+
+                setBets(filtered);
+                setCurrentBetIndex(0);
+            } catch (error) {
+                setError('Failed to load betting recommendations.');
+            } finally {
+                setLoading(false);
+            }
+        },
+        [placedBetKeys, dismissedBetKeys]
+    );
 
     useEffect(() => {
         if (selectedSport) {
@@ -93,8 +121,15 @@ const BettingInterface = () => {
             setSelectedBet(bet);
             setIsModalOpen(true);
         } else {
+            const key = computeBetKey(bet);
+            if (!dismissedBetKeys.has(key)) {
+                const next = new Set(dismissedBetKeys);
+                next.add(key);
+                persistDismissedBetKeys(next);
+            }
+
             setTimeout(() => {
-                setCurrentBetIndex(prev => Math.min(prev + 1, bets.length));
+                setCurrentBetIndex((prev) => Math.min(prev + 1, bets.length));
                 setSwipeDirection(null);
             }, 300);
         }
@@ -148,7 +183,7 @@ const BettingInterface = () => {
             setSelectedBet(null);
             advanceToNextCard();
         } else {
-            console.error (result.error);
+            console.error(result.error);
         }
     };
 

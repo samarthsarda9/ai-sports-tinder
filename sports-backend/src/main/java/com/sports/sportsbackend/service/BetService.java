@@ -75,7 +75,7 @@ public class BetService {
             newGame.setId(request.getGameId());
             newGame.setSportKey(request.getSport().name());
             newGame.setHomeTeam(request.getTeam());
-            newGame.setAwayTeam(request.getTeam());
+            newGame.setAwayTeam(request.getOpponent());
             newGame.setStartTime(request.getGameTime());
             newGame.setStatus(Game.GameStatus.UPCOMING);
             return gameRepository.save(newGame);
