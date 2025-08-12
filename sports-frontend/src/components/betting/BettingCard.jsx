@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion'
 import { TrendingUp, TrendingDown, Target, Clock } from 'lucide-react'
 
 const BettingCard = ({ bet, onSwipe, onCardClick }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
 
     const handleDragEnd = (event, info) => {
         const swipeThreshold = 100;
@@ -11,25 +10,6 @@ const BettingCard = ({ bet, onSwipe, onCardClick }) => {
             onSwipe('right', bet);
         } else if (info.offset.x < -swipeThreshold) {
             onSwipe('left', bet);
-        }
-    };
-
-    const getRecommendationColor = (recommendation) => {
-        switch(recommendation) {
-            case 'Strong Bet': return 'text-green-600 bg-green-100';
-            case 'Good Bet': return 'text-blue-600 bg-blue-100';
-            case 'Risky Bet': return 'text-yellow-600 bg-yellow-100';
-            case 'Avoid': return 'text-red-600 bg-red-100';
-            default: return 'text-gray-600 bg-gray-100';
-        }
-    };
-
-    const getRiskColor = (risk) => {
-        switch (risk) {
-            case 'Low': return 'text-green-600';
-            case 'Medium': return 'text-yellow-600';
-            case 'High': return 'text-red-600';
-            default: return 'text-gray-600';
         }
     };
 
@@ -82,11 +62,11 @@ const BettingCard = ({ bet, onSwipe, onCardClick }) => {
                         </div>
                         <div className='text-center'>
                             <p className='text-sm text-blue-100'>Odds</p>
-                            <p className='text-2xl font-bold'>{bet.odds}</p>
+                            <p className='text-2xl font-bold'>{formatOdds(bet.odds)}</p>
                         </div>
                         <div className='text-center'>
                             <p className='text-sm text-blue-100'>Confidence</p>
-                            <p className='text-2xl font-bold'>{bet.confidence}</p>
+                            <p className='text-2xl font-bold'>{bet.aiAnalysis.confidence}</p>
                         </div>
                     </div>
                 </div>
@@ -96,12 +76,12 @@ const BettingCard = ({ bet, onSwipe, onCardClick }) => {
                     <div className='flex items-center justify-between mb-4'>
                         <div className='flex items-center space-x-2'>
                             <Target className='w-5 h-5 text-gray-500' />
-                            <span className='font-semibold text-gray-800'>{bet.betType}</span>
+                            <span className='font-semibold text-gray-800'>{bet.type}</span>
                         </div>
                         <div className={`flex items-center space-x-1 px-3 py-1 rounded-full ${
-                            bet.overUnder === 'Over' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                            bet.overUnder === 'OVER' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                         }`}>
-                            {bet.overUnder === 'Over' ? (
+                            {bet.overUnder === 'OVER' ? (
                                 <TrendingUp className='w-4 h-4' />
                             ) : (
                                 <TrendingDown className='w-4 h-4' />
@@ -112,25 +92,14 @@ const BettingCard = ({ bet, onSwipe, onCardClick }) => {
 
                     {/*AI Analysis*/}
                     <div className='bg-gray-50 rounded-lg p-4 mb-4'>
-                        <div className='flex items-center justify-between mb-2'>
-                            <h4 className='font-semibold text-gray-800'>AI Analysis</h4>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRecommendationColor(bet.aiAnalysis.recommendation)}`}>
-                                {bet.aiAnalysis.recommendation}
-                            </span>
+                        <div className='flex items-center justify-center mb-2'>
+                            <h4 className='font-semibold text-gray-800'>Description</h4>
                         </div>
-                        <p className='text-sm text-gray-600 line-clamp-2'>{bet.aiAnalysis.reasoning}</p>
-                        <div className='flex items-center justify-between mt-2'>
-                            <span className='text-xs text-gray-500'>
-                                Confidence: {bet.aiAnalysis.confidence}%
-                            </span>
-                            <span className={`text-xs font-medium ${getRiskColor(bet.aiAnalysis.riskLevel)}`}>
-                                Risk: {bet.aiAnalysis.riskLevel}
-                            </span>
-                        </div>
+                        <p className='text-md text-gray-600 line-clamp-2'>{bet.description}</p>
                     </div>
 
                     {/*Game Time*/}
-                    <div className='flex items-center space-x-2 text-sm text-gray-500'>
+                    <div className='flex items-center justify-center space-x-2 text-sm text-gray-500'>
                         <Clock className='w-4 h-4' />
                         <span>{formatGameTime(bet.gameTime)}</span>
                     </div>

@@ -65,13 +65,13 @@ const Register = () => {
     }
 
     return (
-        <div className='min-h-screen bg-gray-900 text-white flex items-center justify-center p-4'>
+        <div className='min-h-screen text-white flex items-center justify-center p-4'>
             <div className='w-full max-w-md'>
                 <div className='text-center mb-8'>
-                    <h1 className="text-4xl font-bold text-blue-400">Sign Up</h1>
+                    <h1 className="text-4xl font-bold text-brand-400">Sign Up</h1>
                 </div>
 
-                <form onSubmit={handleSubmit} className='bg-gray-800 p-8 rounded-2xl shadow-2xl space-y-6'>
+                <form onSubmit={handleSubmit} className='card p-8 space-y-6'>
                     {error && (
                         <div className='bg-red-500/20 text-red-300 p-3 rounded-lg text-center'>
                             {error}
@@ -87,7 +87,7 @@ const Register = () => {
                             required
                             value={formData.firstName}
                             onChange={handleChange}
-                            className="w-full bg-gray-700 border border-gray-600 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            className="w-full bg-gray-800/60 border border-white/10 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all placeholder:text-gray-400 text-white"
                         />
                     </div>
 
@@ -100,7 +100,7 @@ const Register = () => {
                             required
                             value={formData.lastName}
                             onChange={handleChange}
-                            className="w-full bg-gray-700 border border-gray-600 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            className="w-full bg-gray-800/60 border border-white/10 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all placeholder:text-gray-400 text-white"
                         />
                     </div>
 
@@ -113,7 +113,7 @@ const Register = () => {
                             required
                             value={formData.username}
                             onChange={handleChange}
-                            className="w-full bg-gray-700 border border-gray-600 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            className="w-full bg-gray-800/60 border border-white/10 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all placeholder:text-gray-400 text-white"
                         />
                     </div>
 
@@ -127,7 +127,7 @@ const Register = () => {
                             required
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full bg-gray-700 border border-gray-600 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            className="w-full bg-gray-800/60 border border-white/10 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all placeholder:text-gray-400 text-white"
                         />
                     </div>
 
@@ -141,21 +141,21 @@ const Register = () => {
                             required
                             value={formData.password}
                             onChange={handleChange}
-                            className="w-full bg-gray-700 border border-gray-600 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            className="w-full bg-gray-800/60 border border-white/10 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all placeholder:text-gray-400 text-white"
                         />
                     </div>
 
                     <button 
                         type='submit'
                         disabled={loading}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center disabled:bg-gray-500"
+                        className="btn btn-primary w-full py-3 px-4 flex items-center justify-center"
                         >
                             {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : <LogIn className="mr-2" size={20} />}
                             {loading ? 'Signing Up...' : 'Sign Up'}
                     </button>
 
                     <div className="text-center" >
-                        <Link to="/login" className="text-blue-400 hover:text-blue-300 transition-colors">
+                        <Link to="/login" className="text-brand-400 hover:text-brand-300 transition-colors">
                             Already have an account? Sign in!
                         </Link>
                     </div>

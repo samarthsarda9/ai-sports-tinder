@@ -9,3 +9,17 @@ export const placeBet = async (betData) => {
         return { success: false, error: error.response?.data?.error || 'Failed to place bet'}
     };
 };
+
+// export const placeBet = async (betData) => {
+//     // Simulate API delay
+//     await new Promise(resolve => setTimeout(resolve, 500));
+    
+//     // Mock successful bet placement
+//     console.log('Placing bet:', betData);
+    
+//     return {
+//         success: true,
+//         betId: 'bet_' + Date.now(),
+//         message: 'Bet placed successfully!'
+//     };
+// };
